@@ -4,11 +4,11 @@ const Trader = require('../src/trader');
 
 describe("Market Simulation", function() {
   describe("Stock", function() {
-    it("makes a Stock object with expected ticker, outstandings, p/b, eps and prices", function(){
+    it("makes a Stock object with expected ticker, outstandings, book value, eps and prices", function(){
       const s = new Stock('S', 1000, 2.0, 1.0, [10.0, 11.0, 12.0]);
       expect(s.ticker).to.equal('S');
       expect(s.outstanding).to.equal(1000);
-      expect(s.priceBook).to.equal(2.0);
+      expect(s.book).to.equal(2.0);
       expect(s.eps).to.equal(1.0);
       expect(s.price[0]).to.equal(10.0);
       expect(s.price.length).to.equal(3);
@@ -30,6 +30,7 @@ describe("Market Simulation", function() {
       expect(t.cash).to.equal(500.00);
       expect(t.universe.get('Q')).to.equal(q);
       expect(t.universe.get('Q').outstanding).to.equal(4000);
+      expect(t.universe).deep.equal(universe);
     });
 
     it("bidAsk method works correctly", function(){

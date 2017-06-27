@@ -1,10 +1,10 @@
 'use strict';
 
 class Stock{
-  constructor(ticker, outstanding, priceBook, eps, price, vol=1.0, cor=1.0) {
+  constructor(ticker, outstanding, book, eps, price, vol=1.0, cor=1.0) {
     this.ticker = ticker;
     this.outstanding = outstanding;
-    this.priceBook = priceBook;
+    this.book = book;
     this.eps = eps;
     this.price = [...price];
     this.vol = vol;
