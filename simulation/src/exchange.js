@@ -37,23 +37,29 @@ class Exchange{
   
   getTrades(book){
     if (book.size === 0) return {};
-    const trades = new Map();
+    const trades = [];
     book.forEach((stockBook, tick) => {
 
       //Set price at midpoint of bid and ask
       const price = 0.5 * (stockBook.bid[0][1] + stockBook.ask[0][1]);
 
       //If the total bid shares are less than the total ask shares, trade the requested bid shares, else allocate 
-      const [bidTot, askTot] = [stockBook.bid.reduce((x, acc) => x[2] + acc, 0), stockBook.ask.reduce((x, acc) => x[2] + acc, 0)];
+      const bidTot = stockBook.bid.reduce((acc, x) => x[2] + acc, 0);
+      const askTot = stockBook.ask.reduce((acc, x) => x[2] + acc, 0);
 
-      
       if (bidTot < askTot) {
-
+        //Trader name, ticker, price, shares.  If shares bid < shares ask, allocate shares ask
+        trades.push(stockBook.bid.map((x) => [x[0], tick, price, x[2]]));
+        trades.push(stockBook.ask.map((x) => [x[0], tick, price, -x[2] * bidTot / askTot]));
       } else {
-
+        //Otherwise, allocate shares bid
+        trades.push(stockBook.bid.map((x) => [x[0], tick, price, x[2] * askTot / bidTot]));
+        trades.push(stockBook.ask.map((x) => [x[0], tick, price, -x[2]]));
       }
     });
-    return {};
+    //console.log(trades);
+    return trades.reduce((acc, x) => acc.concat(x), [])
+;
   }
 }
 

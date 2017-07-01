@@ -19,7 +19,9 @@ const traders = new Map([[t.name, t], [u.name, u], [v.name, v]]);
 
 const exchange = new Exchange(universe, traders);
 
-console.log(exchange.getOrderBook());
+const book = exchange.getOrderBook();
+
+const trades = exchange.getTrades(book);
 
 
 
