@@ -174,6 +174,33 @@ describe("Market Simulation", function() {
       expect(e.universe.get('Q').price).deep.equal([29.924999999999997, 30.0, 31.0, 32.0]);
       expect(e.universe.get('R').price).deep.equal([30.0, 30.0, 25.0, 20.0]);
     });
+
+    it("gets new prices, portfolio and cash balances", function(){
+      const s = new Stock('S', 1000, 15.0, 0.5, [10.0, 11.0, 12.0]);
+      const p = new Stock('P', 3000, 10.0, 2.0, [25.0, 21.0, 18.0]);
+      const q = new Stock('Q', 4000, 5.0, 10.0, [30.0, 31.0, 32.0]);
+      const r = new Stock('R', 5000, 15.0, 3.0, [30.0, 25.0, 20.0]);
+      const universe = new Map([[s.ticker, s], [p.ticker, p], [q.ticker, q], [r.ticker, r]]);
+      const t = new Trader('Tom', [0.1,2,-1], [['S', 100], ['P', 200]], 500.00, universe); 
+      const j = new Trader('Joe', [0.2,1,-2], [['Q', 100], ['P', 200]], 1500.00, universe); 
+      const a = new Trader('Huck', [0.3,0.5,-5], [['Q', 100], ['S', 200]], 1500.00, universe); 
+      const traders = new Map([[t.name, t], [j.name, j], [a.name, a]]);
+      const e = new Exchange(universe, traders);
+      const book = e.getOrderBook();
+      const trades = e.getTrades(book);
+      //e.updatePrices(trades); 
+      const [newPrice, newPortfolio, newCash] = e.getUpdates(trades);
+      console.log(newPrice);
+      console.log(newPortfolio);
+      console.log(newCash);
+      expect(newPrice).deep.equal(new Map([['S', 10.075], ['P', 25.075000000000003], ['Q', 29.924999999999997]]));
+      expect(newPortfolio).deep.equal(new Map( 
+        [['Tom', new Map ([['S', 0], ['P', 185], ['Q', 8.333333333333334]])],
+         ['Joe', new Map ([['Q', 125], ['P', 185], ['S', 50]])],
+         ['Huck', new Map ([['Q', 66.66666666666666], ['S', 250], ['P', 30]])]
+        ]));
+      expect(newCash).deep.equal(new Map([['Tom' , 249.375], ['Joe', 875.7499999999998], ['Huck', -245.2499999999999]]));
+    });
   });
 });
 
