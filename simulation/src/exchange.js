@@ -65,17 +65,6 @@ class Exchange{
     return trades.reduce((acc, x) => acc.concat(x), []);
   }
 
-  //Return Map of new prices.  If there are no trades, keep prices the same for this cycle.
-  updatePrices(trades){
-    //Make a map of prices from trades for ticker t[1] and price t[2]
-    const update = new Map();
-    trades.forEach(t => {if (!update.has(t[1])) update.set(t[1], t[2])});
-    
-    //Update price history of stocks in universe.  Better to return a new universe
-    this.universe.forEach((stock, ticker) => stock.price.unshift(update.has(ticker) ? update.get(ticker) : stock.price[0]));
-    return update;
-  }
-
   //Return new Maps for prices, portfolios and cash balances after this cycle 
   getUpdates(trades){
     const [newPrice, newPort, newCash] = [new Map(), new Map(), new Map()];
