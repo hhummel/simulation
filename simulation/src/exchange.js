@@ -76,30 +76,26 @@ class Exchange{
     return update;
   }
 
-  //Update trader portfolios
+  //Return new Maps for prices, portfolios and cash balances after this cycle 
   getUpdates(trades){
     const [newPrice, newPort, newCash] = [new Map(), new Map(), new Map()];
 
     //Get prices for stocks with trades
     trades.forEach(t => {if (!newPrice.has(t[1])) newPrice.set(t[1], t[2])});
 
-    //Get current portfolio and cash data, then update for new trades.
+    //Update or set portfolio stock balance and cash balance. trade[0]: trader, trade[1]: ticker, trade[2]: price, trade[3]: shares
     this.traders.forEach((trader, traderName) => {
       newPort.set(traderName, trader.portfolio);
       newCash.set(traderName, trader.cash);
     });
- 
     trades.forEach(trade => {
-      //Update or set portfolio stock balance and cash balance. trade[0]: trader, trade[1]: ticker, trade[2]: price, trade[3]: shares
-      const shares = newPort.get(trade[0]).has(trade[1]) ? newPort.get(trade[0]).get(trade[1]) + trade[3] : trade[3];
-      const cash = newPort.get(trade[0]).has(trade[1]) ? newCash.get(trade[0]) + trade[2] * trade[3] : trade[2] * trade[3];
-      newPort.get(trade[0]).set(trade[1], shares);
-      newCash.set(trade[0], cash); 
+      newPort.get(trade[0]).set(trade[1], newPort.get(trade[0]).has(trade[1]) ? newPort.get(trade[0]).get(trade[1]) + trade[3] : trade[3]);
+      newCash.set(trade[0], newCash.get(trade[0]) - trade[2] * trade[3]);
     });
     return [newPrice, newPort, newCash];
   }
 
-  //Update stock prices and trader portfolios.  If there are no trades, keep prices the same for this cycle.
+  //Update stock prices and trader portfolios and cash balances.  If there are no trades, keep prices the same for this cycle.
   clearTrades(prices, newPort, newCash){
     //Update price history of stocks in universe.  Better to return a new universe
     this.universe.forEach((stock, ticker) => stock.price.unshift(newPrice.has(ticker) ? newPrice.get(ticker) : stock.price[0]));
