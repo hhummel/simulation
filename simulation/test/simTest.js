@@ -199,7 +199,7 @@ describe("Market Simulation", function() {
          ['Joe', new Map ([['Q', 125], ['P', 185], ['S', 50]])],
          ['Huck', new Map ([['Q', 66.66666666666666], ['S', 250], ['P', 30]])]
         ]));
-      expect(newCash).deep.equal(new Map([['Tom' , 249.375], ['Joe', 875.7499999999998], ['Huck', -245.2499999999999]]));
+      expect(newCash).deep.equal(new Map([['Tom' , 1634.25], ['Joe', 624.2500000000001], ['Huck', 1241.5]]));
     });
   });
 });
