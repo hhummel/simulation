@@ -1,5 +1,6 @@
 'use strict';
 
+//Initialization
 const Stock = require('./stock');
 const Trader = require('./trader');
 const Exchange = require('./exchange');
@@ -27,19 +28,35 @@ const cash = new Map(
   ]
 );
 
-const t = new Trader('Tom', [0.1, 3, -2], portfolio.get('Tom')[0], cash.get('Tom')[0], universe); 
-const u = new Trader('Dick', [0.2, 2, -3], portfolio.get('Dick')[0], cash.get('Dick')[0], universe); 
-const v = new Trader('Harry', [0.3, 1, -1], portfolio.get('Harry')[0], cash.get('Harry')[0], universe); 
+//Cycle
+let cycle = 0;
 
-//const traders = new Map([[t['name'], t], [u['name'], u], [v['name'], v]]);
-const traders = new Map([[t.name, t], [u.name, u], [v.name, v]]);
+while (cycle < 10) {
+  cycle += 1;
 
-const exchange = new Exchange(universe, traders);
+  //Make traders
+  const t = new Trader('Tom', [0.1, 3, -2], portfolio.get('Tom')[0], cash.get('Tom')[0], universe); 
+  const u = new Trader('Dick', [0.2, 2, -3], portfolio.get('Dick')[0], cash.get('Dick')[0], universe); 
+  const v = new Trader('Harry', [0.3, 1, -1], portfolio.get('Harry')[0], cash.get('Harry')[0], universe); 
+  const traders = new Map([[t.name, t], [u.name, u], [v.name, v]]);
 
-const book = exchange.getOrderBook();
+  //Do trades
+  const exchange = new Exchange(universe, traders);
+  const book = exchange.getOrderBook();
+  const trades = exchange.getTrades(book);
+  if (trades.length === undefined) break;
+  const [newPrice, newPortfolio, newCash] = exchange.getUpdates(trades);
 
-const trades = exchange.getTrades(book);
+  //Update data structures
+  universe.forEach((stock, ticker) => stock.price.unshift(newPrice.has(ticker) ? newPrice.get(ticker) : stock.price[0]));
+  portfolio.forEach((array, name) => array.unshift(Array.from(newPortfolio.get(name))));
+  cash.forEach((array, name) => array.unshift(newCash.get(name)));
 
-const [newPrice, newPortfolio, newCash] = exchange.getUpdate(trades);
-
-
+  //Output results
+  console.log("Cycle: ", cycle);
+  console.log("Stocks: ");
+  universe.forEach((stock, ticker) => console.log(ticker, stock.price));
+  console.log("Portfolios: ");
+  portfolio.forEach((port, name) => console.log(name, port));
+  console.log("Cash: ", cash);
+}

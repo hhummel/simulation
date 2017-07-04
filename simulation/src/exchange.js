@@ -85,10 +85,12 @@ class Exchange{
   }
 
   //Update stock prices and trader portfolios and cash balances.  If there are no trades, keep prices the same for this cycle.
-  clearTrades(prices, newPort, newCash){
+  commitUpdates(newPrice, newPort, newCash){
     //Update price history of stocks in universe.  Better to return a new universe
     this.universe.forEach((stock, ticker) => stock.price.unshift(newPrice.has(ticker) ? newPrice.get(ticker) : stock.price[0]));
+    console.log(this.universe);
   }
+  
 }
 
 module.exports = Exchange;
