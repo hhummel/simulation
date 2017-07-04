@@ -14,9 +14,9 @@ const universe = new Map([[s.ticker, s], [p.ticker, p], [q.ticker, q], [r.ticker
 
 const portfolio = new Map(
   [
-    ['Tom', [[['S', 100], ['P', 200]]]],
-    ['Dick', [[['P', 100], ['Q', 200]]]],
-    ['Harry', [[['S', 100], ['Q', 200]]]]
+    ['Tom', [[['S', 100], ['P', 200], ['R', 2]]]],
+    ['Dick', [[['P', 100], ['Q', 200], ['R', 2]]]],
+    ['Harry', [[['S', 100], ['Q', 200], ['R', 2]]]]
   ]
 );
 
@@ -30,8 +30,9 @@ const cash = new Map(
 
 //Cycle
 let cycle = 0;
+const limit = 20;
 
-while (cycle < 10) {
+while (true) {
   cycle += 1;
 
   //Make traders
@@ -44,7 +45,18 @@ while (cycle < 10) {
   const exchange = new Exchange(universe, traders);
   const book = exchange.getOrderBook();
   const trades = exchange.getTrades(book);
-  if (trades.length === undefined) break;
+  //console.log(book.get('S'));
+  //console.log(book.get('P'));
+  //console.log(book.get('Q'));
+  //console.log(book.get('R'));
+  if (trades.length === undefined || cycle === limit) {
+    console.log("Stocks: ");
+    universe.forEach((stock, ticker) => console.log(ticker, stock.price));
+    console.log("Portfolios: ");
+    portfolio.forEach((port, name) => console.log(name, port));
+    console.log("Cash: ", cash);
+    break;
+  }
   const [newPrice, newPortfolio, newCash] = exchange.getUpdates(trades);
 
   //Update data structures
@@ -54,9 +66,6 @@ while (cycle < 10) {
 
   //Output results
   console.log("Cycle: ", cycle);
-  console.log("Stocks: ");
-  universe.forEach((stock, ticker) => console.log(ticker, stock.price));
-  console.log("Portfolios: ");
-  portfolio.forEach((port, name) => console.log(name, port));
-  console.log("Cash: ", cash);
+  console.log("Trades: ", trades);
 }
+

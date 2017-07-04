@@ -20,15 +20,17 @@ class Exchange{
         let bidAsk = trader.bidAsk(tick);
         if (bidAsk.askPrice < ask && bidAsk.askShares !== undefined) ask = bidAsk.askPrice;
         if (bidAsk.bidPrice > bid && bidAsk.bidShares !== undefined) bid = bidAsk.bidPrice;
+        //console.log(tick, trader.name, bidAsk);
       });
       
       //Record trade opportunities.  Only offers at the bid/ask limits are considered
+      //console.log(tick, bid, ask);
       if (bid >= ask) {
         const stockBook = {'bid':[], 'ask':[]};
         this.traders.forEach(trader => {
           let bidAsk = trader.bidAsk(tick);
           if (bidAsk.bidPrice >= ask) stockBook.bid.push([trader.name, bidAsk.bidPrice, bidAsk.bidShares]);
-          if (bidAsk.askPrice <= bid) stockBook.ask.push([trader.name, bidAsk.askPrice, bidAsk.askShares]);
+          if (bidAsk.askPrice <= bid && bidAsk.askShares != undefined) stockBook.ask.push([trader.name, bidAsk.askPrice, bidAsk.askShares]);
         });
       book.set(tick, stockBook);
       }
@@ -88,7 +90,7 @@ class Exchange{
   commitUpdates(newPrice, newPort, newCash){
     //Update price history of stocks in universe.  Better to return a new universe
     this.universe.forEach((stock, ticker) => stock.price.unshift(newPrice.has(ticker) ? newPrice.get(ticker) : stock.price[0]));
-    console.log(this.universe);
+    //console.log(this.universe);
   }
   
 }
