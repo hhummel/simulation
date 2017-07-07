@@ -9,8 +9,11 @@
         };
         let circles = [];
         
-        function CreateSVG (universe) {
+        function CreateSVG (universe, portfolio, cash) {
             console.log("CreateSVG universe: ", universe);
+            console.log("CreateSVG portfolio: ", portfolio);
+            console.log("CreateSVG cash: ", cash);
+
             var boxWidth = 390;
             var boxHeight = 390;
 

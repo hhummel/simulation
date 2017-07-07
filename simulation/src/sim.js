@@ -12,7 +12,7 @@ const p = new Stock('P', 3000, 5.0, 2.0, [22.0, 21.0, 20.0]);
 const q = new Stock('Q', 4000, 35.0, 0.5, [30.0, 30.5, 31.0]);
 const r = new Stock('R', 5000, 15.0, 0.5, [30.0, 25.0, 20.0]);
 
-var universe = new Map([[s.ticker, s], [p.ticker, p], [q.ticker, q], [r.ticker, r]]);
+const universe = new Map([[s.ticker, s], [p.ticker, p], [q.ticker, q], [r.ticker, r]]);
 
 const portfolio = new Map(
   [
@@ -99,7 +99,5 @@ while (true) {
   console.log("Trades: ", trades);
 }
 
-CreateSVG(universe);
-
-module.exports = universe;
+CreateSVG(universe, portfolio, cash);
 
