@@ -1,7 +1,7 @@
 'use strict';
 
-const Stock = require('./stock');
-const Trader = require('./trader');
+const Stock = require('./stock.js');
+const Trader = require('./trader.js');
 
 class Exchange{
   constructor(universe, traders){
