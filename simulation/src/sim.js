@@ -10,7 +10,8 @@ const CreateSVG = require('./draw.js');
 const s = new Stock('S', 1000, 5.0, -1.0, [10.0, 11.0, 12.0]);
 const p = new Stock('P', 3000, 5.0, 2.0, [22.0, 21.0, 20.0]);
 const q = new Stock('Q', 4000, 35.0, 0.5, [30.0, 30.5, 31.0]);
-const r = new Stock('R', 5000, 15.0, 0.5, [30.0, 25.0, 20.0]);
+//const q = new Stock('Q', 4000, 5.0, 25.0, [30.0, 30.5, 31.0]);
+const r = new Stock('R', 5000, 15.0, 0.5, [5.0, 3.0, 1.0]);
 
 const universe = new Map([[s.ticker, s], [p.ticker, p], [q.ticker, q], [r.ticker, r]]);
 
@@ -45,21 +46,21 @@ const cash = new Map(
 
 //Cycle
 let cycle = 0;
-const limit = 20;
+const limit = 200;
 
 while (true) {
   cycle += 1;
 
   //Make traders
-  const t = new Trader('Tom', [0.1, 3, -2], portfolio.get('Tom')[0], cash.get('Tom')[0], universe); 
-  const u = new Trader('Dick', [0.2, 2, -3], portfolio.get('Dick')[0], cash.get('Dick')[0], universe); 
-  const v = new Trader('Harry', [0.3, 1, -1], portfolio.get('Harry')[0], cash.get('Harry')[0], universe); 
-  const c = new Trader('Curly', [0.2, 6, -4], portfolio.get('Curly')[0], cash.get('Curly')[0], universe); 
-  const m = new Trader('Moe', [0.4, 4, -6], portfolio.get('Moe')[0], cash.get('Moe')[0], universe); 
-  const l = new Trader('Larry', [0.6, 2, -2], portfolio.get('Larry')[0], cash.get('Larry')[0], universe); 
-  const g = new Trader('Groucho', [0.05, 1.5, -1], portfolio.get('Groucho')[0], cash.get('Groucho')[0], universe); 
-  const h = new Trader('Harpo', [0.1, 1, -1.5], portfolio.get('Harpo')[0], cash.get('Harpo')[0], universe); 
-  const z = new Trader('Zeppo', [0.15, 0.5, -0.5], portfolio.get('Zeppo')[0], cash.get('Zeppo')[0], universe); 
+  const t = new Trader('Tom', [0.1, 3, -2], portfolio.get('Tom')[0], cash.get('Tom')[0], universe, 1.0); 
+  const u = new Trader('Dick', [0.2, 2, -3], portfolio.get('Dick')[0], cash.get('Dick')[0], universe, 1.0); 
+  const v = new Trader('Harry', [0.3, 1, -1], portfolio.get('Harry')[0], cash.get('Harry')[0], universe, 1.0); 
+  const c = new Trader('Curly', [0.2, 6, -4], portfolio.get('Curly')[0], cash.get('Curly')[0], universe, 0.5); 
+  const m = new Trader('Moe', [0.4, 4, -6], portfolio.get('Moe')[0], cash.get('Moe')[0], universe, 0.5); 
+  const l = new Trader('Larry', [0.6, 2, -2], portfolio.get('Larry')[0], cash.get('Larry')[0], universe, 0.5); 
+  const g = new Trader('Groucho', [0.05, 1.5, -1], portfolio.get('Groucho')[0], cash.get('Groucho')[0], universe, 0.75); 
+  const h = new Trader('Harpo', [0.1, 1, -1.5], portfolio.get('Harpo')[0], cash.get('Harpo')[0], universe, 0.75); 
+  const z = new Trader('Zeppo', [0.15, 0.5, -0.5], portfolio.get('Zeppo')[0], cash.get('Zeppo')[0], universe, 0.75); 
   const traders = new Map(
     [
       [t.name, t], 
@@ -77,7 +78,7 @@ while (true) {
   const exchange = new Exchange(universe, traders);
   const book = exchange.getOrderBook();
   const trades = exchange.getTrades(book);
-  if (trades.length === undefined || cycle === limit) {
+  if (trades.length === 0 || cycle === limit) {
 
     //Output cumulative result
     console.log("Stocks: ");

@@ -76,14 +76,15 @@ class Trader{
       [askPrice, askShares] = [price + 4 * this.spread, sellLimit];
     }
     if ((quality && !quantity) || (!quality && quantity)){
-      [bidPrice, bidShares] = [price - this.spread, buyLimit];
+      [bidPrice, bidShares] = [Math.max(0, price - this.spread), buyLimit];
       [askPrice, askShares] = [price + this.spread, sellLimit];
     }
      if (!quality && !quantity) {
-      [bidPrice, bidShares] = [undefined, undefined];
-      [askPrice, askShares] = [price - 2 * this.spread, sellLimit];
+      //[bidPrice, bidShares] = [undefined, undefined];
+      //[askPrice, askShares] = [price - 2 * this.spread, sellLimit];
+      [bidPrice, bidShares] = [Math.max(0, price - 4 * this.spread), buyLimit];
+      [askPrice, askShares] = [Math.max(0, price - 2 * this.spread), sellLimit];
     }
-      
     return {'bidPrice': bidPrice, 'bidShares': bidShares, 'askPrice': askPrice, 'askShares': askShares};
   }
 }

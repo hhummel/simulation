@@ -123,6 +123,7 @@ describe("Market Simulation", function() {
       const a = new Trader('Huck', [0.3,0.5,-5], [['Q', 100], ['S', 200]], 1500.00, universe); 
       const traders = new Map([[t.name, t], [j.name, j], [a.name, a]]);
       const e = new Exchange(universe, traders);
+
       expect(e.getOrderBook()).deep.equal(
         new Map([["P", {"ask": [["Tom", 25.05, 100], ["Joe", 25.05, 100]], "bid": [["Huck", 25.1, 30]]}],
                  ["Q", {"ask": [["Huck", 29.9, 100]], "bid": [["Tom", 29.95, 8.333333333333334], ["Joe", 29.95, 25]]}],

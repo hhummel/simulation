@@ -29,8 +29,10 @@ class Exchange{
         const stockBook = {'bid':[], 'ask':[]};
         this.traders.forEach(trader => {
           let bidAsk = trader.bidAsk(tick);
-          if (bidAsk.bidPrice >= ask) stockBook.bid.push([trader.name, bidAsk.bidPrice, bidAsk.bidShares]);
-          if (bidAsk.askPrice <= bid && bidAsk.askShares != undefined) stockBook.ask.push([trader.name, bidAsk.askPrice, bidAsk.askShares]);
+          if (bidAsk.bidPrice >= ask && bidAsk.bidShares > 1) stockBook.bid.push([trader.name, bidAsk.bidPrice, bidAsk.bidShares]);
+          if (bidAsk.askPrice <= bid && bidAsk.askShares != undefined && bidAsk.askShares > 1) {
+            stockBook.ask.push([trader.name, bidAsk.askPrice, bidAsk.askShares]);
+          }
         });
       book.set(tick, stockBook);
       }
@@ -45,21 +47,28 @@ class Exchange{
     book.forEach((stockBook, tick) => {
 
       //Set price at midpoint of bid and ask
-      const price = 0.5 * (stockBook.bid[0][1] + stockBook.ask[0][1]);
+      const minAsk = Math.min(...stockBook.ask.map(x => x[1]));
+      const maxBid = Math.max(...stockBook.bid.map(x => x[1]));
+      const price = 0.5 * (minAsk + maxBid);
+
+      //Filter out stockBook where ask>price and bid<price
+      const newAsk = stockBook.ask.filter(x => x[1] <= price);
+      const newBid = stockBook.bid.filter(x => x[1] >= price);
 
       //Find total prospective bid and ask shares. 
-      const bidTot = stockBook.bid.reduce((acc, x) => x[2] + acc, 0);
-      const askTot = stockBook.ask.reduce((acc, x) => x[2] + acc, 0);
+      const bidTot = newBid.reduce((acc, x) => x[2] + acc, 0);
+      const askTot = newAsk.reduce((acc, x) => x[2] + acc, 0);
+
 
       //Trader name, ticker, price, shares.  If shares bid < shares ask, allocate shares ask
       if (bidTot < askTot) {
-        trades.push(stockBook.bid.map((x) => [x[0], tick, price, x[2]]));
-        trades.push(stockBook.ask.map((x) => [x[0], tick, price, -x[2] * bidTot / askTot]));
+        trades.push(newBid.map((x) => [x[0], tick, price, x[2]]));
+        trades.push(newAsk.map((x) => [x[0], tick, price, -x[2] * bidTot / askTot]));
   
       //Otherwise, allocate shares bid
       } else {
-        trades.push(stockBook.bid.map((x) => [x[0], tick, price, x[2] * askTot / bidTot]));
-        trades.push(stockBook.ask.map((x) => [x[0], tick, price, -x[2]]));
+        trades.push(newBid.map((x) => [x[0], tick, price, x[2] * askTot / bidTot]));
+        trades.push(newAsk.map((x) => [x[0], tick, price, -x[2]]));
       }
     });
 
@@ -90,7 +99,6 @@ class Exchange{
   commitUpdates(newPrice, newPort, newCash){
     //Update price history of stocks in universe.  Better to return a new universe
     this.universe.forEach((stock, ticker) => stock.price.unshift(newPrice.has(ticker) ? newPrice.get(ticker) : stock.price[0]));
-    //console.log(this.universe);
   }
   
 }

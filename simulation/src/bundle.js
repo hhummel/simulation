@@ -170,14 +170,15 @@ class Trader{
       [askPrice, askShares] = [price + 4 * this.spread, sellLimit];
     }
     if ((quality && !quantity) || (!quality && quantity)){
-      [bidPrice, bidShares] = [price - this.spread, buyLimit];
+      [bidPrice, bidShares] = [Math.max(0, price - this.spread), buyLimit];
       [askPrice, askShares] = [price + this.spread, sellLimit];
     }
      if (!quality && !quantity) {
-      [bidPrice, bidShares] = [undefined, undefined];
-      [askPrice, askShares] = [price - 2 * this.spread, sellLimit];
+      //[bidPrice, bidShares] = [undefined, undefined];
+      //[askPrice, askShares] = [price - 2 * this.spread, sellLimit];
+      [bidPrice, bidShares] = [Math.max(0, price - 4 * this.spread), buyLimit];
+      [askPrice, askShares] = [Math.max(0, price - 2 * this.spread), sellLimit];
     }
-      
     return {'bidPrice': bidPrice, 'bidShares': bidShares, 'askPrice': askPrice, 'askShares': askShares};
   }
 }
@@ -205,7 +206,8 @@ const CreateSVG = __webpack_require__(4);
 const s = new Stock('S', 1000, 5.0, -1.0, [10.0, 11.0, 12.0]);
 const p = new Stock('P', 3000, 5.0, 2.0, [22.0, 21.0, 20.0]);
 const q = new Stock('Q', 4000, 35.0, 0.5, [30.0, 30.5, 31.0]);
-const r = new Stock('R', 5000, 15.0, 0.5, [30.0, 25.0, 20.0]);
+//const q = new Stock('Q', 4000, 5.0, 25.0, [30.0, 30.5, 31.0]);
+const r = new Stock('R', 5000, 15.0, 0.5, [5.0, 3.0, 1.0]);
 
 const universe = new Map([[s.ticker, s], [p.ticker, p], [q.ticker, q], [r.ticker, r]]);
 
@@ -240,21 +242,21 @@ const cash = new Map(
 
 //Cycle
 let cycle = 0;
-const limit = 20;
+const limit = 200;
 
 while (true) {
   cycle += 1;
 
   //Make traders
-  const t = new Trader('Tom', [0.1, 3, -2], portfolio.get('Tom')[0], cash.get('Tom')[0], universe); 
-  const u = new Trader('Dick', [0.2, 2, -3], portfolio.get('Dick')[0], cash.get('Dick')[0], universe); 
-  const v = new Trader('Harry', [0.3, 1, -1], portfolio.get('Harry')[0], cash.get('Harry')[0], universe); 
-  const c = new Trader('Curly', [0.2, 6, -4], portfolio.get('Curly')[0], cash.get('Curly')[0], universe); 
-  const m = new Trader('Moe', [0.4, 4, -6], portfolio.get('Moe')[0], cash.get('Moe')[0], universe); 
-  const l = new Trader('Larry', [0.6, 2, -2], portfolio.get('Larry')[0], cash.get('Larry')[0], universe); 
-  const g = new Trader('Groucho', [0.05, 1.5, -1], portfolio.get('Groucho')[0], cash.get('Groucho')[0], universe); 
-  const h = new Trader('Harpo', [0.1, 1, -1.5], portfolio.get('Harpo')[0], cash.get('Harpo')[0], universe); 
-  const z = new Trader('Zeppo', [0.15, 0.5, -0.5], portfolio.get('Zeppo')[0], cash.get('Zeppo')[0], universe); 
+  const t = new Trader('Tom', [0.1, 3, -2], portfolio.get('Tom')[0], cash.get('Tom')[0], universe, 1.0); 
+  const u = new Trader('Dick', [0.2, 2, -3], portfolio.get('Dick')[0], cash.get('Dick')[0], universe, 1.0); 
+  const v = new Trader('Harry', [0.3, 1, -1], portfolio.get('Harry')[0], cash.get('Harry')[0], universe, 1.0); 
+  const c = new Trader('Curly', [0.2, 6, -4], portfolio.get('Curly')[0], cash.get('Curly')[0], universe, 0.5); 
+  const m = new Trader('Moe', [0.4, 4, -6], portfolio.get('Moe')[0], cash.get('Moe')[0], universe, 0.5); 
+  const l = new Trader('Larry', [0.6, 2, -2], portfolio.get('Larry')[0], cash.get('Larry')[0], universe, 0.5); 
+  const g = new Trader('Groucho', [0.05, 1.5, -1], portfolio.get('Groucho')[0], cash.get('Groucho')[0], universe, 0.75); 
+  const h = new Trader('Harpo', [0.1, 1, -1.5], portfolio.get('Harpo')[0], cash.get('Harpo')[0], universe, 0.75); 
+  const z = new Trader('Zeppo', [0.15, 0.5, -0.5], portfolio.get('Zeppo')[0], cash.get('Zeppo')[0], universe, 0.75); 
   const traders = new Map(
     [
       [t.name, t], 
@@ -272,7 +274,7 @@ while (true) {
   const exchange = new Exchange(universe, traders);
   const book = exchange.getOrderBook();
   const trades = exchange.getTrades(book);
-  if (trades.length === undefined || cycle === limit) {
+  if (trades.length === 0 || cycle === limit) {
 
     //Output cumulative result
     console.log("Stocks: ");
@@ -334,8 +336,10 @@ class Exchange{
         const stockBook = {'bid':[], 'ask':[]};
         this.traders.forEach(trader => {
           let bidAsk = trader.bidAsk(tick);
-          if (bidAsk.bidPrice >= ask) stockBook.bid.push([trader.name, bidAsk.bidPrice, bidAsk.bidShares]);
-          if (bidAsk.askPrice <= bid && bidAsk.askShares != undefined) stockBook.ask.push([trader.name, bidAsk.askPrice, bidAsk.askShares]);
+          if (bidAsk.bidPrice >= ask && bidAsk.bidShares > 1) stockBook.bid.push([trader.name, bidAsk.bidPrice, bidAsk.bidShares]);
+          if (bidAsk.askPrice <= bid && bidAsk.askShares != undefined && bidAsk.askShares > 1) {
+            stockBook.ask.push([trader.name, bidAsk.askPrice, bidAsk.askShares]);
+          }
         });
       book.set(tick, stockBook);
       }
@@ -350,21 +354,28 @@ class Exchange{
     book.forEach((stockBook, tick) => {
 
       //Set price at midpoint of bid and ask
-      const price = 0.5 * (stockBook.bid[0][1] + stockBook.ask[0][1]);
+      const minAsk = Math.min(...stockBook.ask.map(x => x[1]));
+      const maxBid = Math.max(...stockBook.bid.map(x => x[1]));
+      const price = 0.5 * (minAsk + maxBid);
+
+      //Filter out stockBook where ask>price and bid<price
+      const newAsk = stockBook.ask.filter(x => x[1] <= price);
+      const newBid = stockBook.bid.filter(x => x[1] >= price);
 
       //Find total prospective bid and ask shares. 
-      const bidTot = stockBook.bid.reduce((acc, x) => x[2] + acc, 0);
-      const askTot = stockBook.ask.reduce((acc, x) => x[2] + acc, 0);
+      const bidTot = newBid.reduce((acc, x) => x[2] + acc, 0);
+      const askTot = newAsk.reduce((acc, x) => x[2] + acc, 0);
+
 
       //Trader name, ticker, price, shares.  If shares bid < shares ask, allocate shares ask
       if (bidTot < askTot) {
-        trades.push(stockBook.bid.map((x) => [x[0], tick, price, x[2]]));
-        trades.push(stockBook.ask.map((x) => [x[0], tick, price, -x[2] * bidTot / askTot]));
+        trades.push(newBid.map((x) => [x[0], tick, price, x[2]]));
+        trades.push(newAsk.map((x) => [x[0], tick, price, -x[2] * bidTot / askTot]));
   
       //Otherwise, allocate shares bid
       } else {
-        trades.push(stockBook.bid.map((x) => [x[0], tick, price, x[2] * askTot / bidTot]));
-        trades.push(stockBook.ask.map((x) => [x[0], tick, price, -x[2]]));
+        trades.push(newBid.map((x) => [x[0], tick, price, x[2] * askTot / bidTot]));
+        trades.push(newAsk.map((x) => [x[0], tick, price, -x[2]]));
       }
     });
 
@@ -395,7 +406,6 @@ class Exchange{
   commitUpdates(newPrice, newPort, newCash){
     //Update price history of stocks in universe.  Better to return a new universe
     this.universe.forEach((stock, ticker) => stock.price.unshift(newPrice.has(ticker) ? newPrice.get(ticker) : stock.price[0]));
-    //console.log(this.universe);
   }
   
 }
@@ -411,7 +421,8 @@ module.exports = Exchange;
 
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let scale = 5.0;
+        let xscale = 20.0;
+        let yscale = 20.0;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],
           'x': [[230, 53], [63, 270], [51, 170], [270, 270], [100, 133], [133, 83], [50, 200], [47, 47], [238, 53], [68, 270], [58, 170]],
@@ -424,8 +435,8 @@ module.exports = Exchange;
             console.log("CreateSVG portfolio: ", portfolio);
             console.log("CreateSVG cash: ", cash);
 
-            var boxWidth = 390;
-            var boxHeight = 390;
+            var boxWidth = 790;
+            var boxHeight = 790;
 
             var svgElem = document.createElementNS (xmlns, "svg");
             //svgElem.setAttributeNS (null, "viewBox", "0 0 " + boxWidth + " " + boxHeight);
@@ -435,14 +446,14 @@ module.exports = Exchange;
 
             var g = document.createElementNS (xmlns, "g");
             svgElem.appendChild (g);
-            g.setAttributeNS (null, 'transform', 'matrix(1,0,0,-1,0,390)');
+            g.setAttributeNS (null, 'transform', 'matrix(1,0,0,-1,0,790)');
 
             // draw borders
             var coords = "M 0, 0";
-            coords += " l 0, 390";
-            coords += " l 390, 0";
-            coords += " l 0, -390";
-            coords += " l -390, 0";
+            coords += " l 0, 790";
+            coords += " l 790, 0";
+            coords += " l 0, -790";
+            coords += " l -790, 0";
 
             var path = document.createElementNS (xmlns, "path");
             path.setAttributeNS (null, 'stroke', "#000000");
@@ -452,11 +463,14 @@ module.exports = Exchange;
             path.setAttributeNS (null, 'fill', "white");
             path.setAttributeNS (null, 'opacity', 1.0);
             g.appendChild (path);
+
+            const colors = new Map([['S', 'pink'], ['P', 'purple'], ['Q', 'blue'], ['R', 'red']]); 
   
-            for (let i=0; i<state.fill.length; i++){
-              circles.push(createCircle(state.x[i][0], state.x[i][1], state.fill[i]));
-              g.appendChild(circles[i]);
-            }
+            universe.forEach((stock, ticker) => stock.price.forEach((price, index) => {
+                circles.push(createCircle(xscale*(stock.price.length - index), yscale*price, colors.get(ticker)));
+              }));
+
+            circles.forEach(circle => g.appendChild(circle));
 
             document.addEventListener('keypress', (event) => shiftState(circles, state, event), false);
 
@@ -471,7 +485,7 @@ module.exports = Exchange;
             circle.setAttributeNS (null, 'cx', cx);
             circle.setAttributeNS (null, 'cy', cy);
             circle.setAttributeNS (null, 'fill', fill);
-            circle.setAttributeNS (null, 'r', '15');
+            circle.setAttributeNS (null, 'r', '10');
             circle.setAttributeNS (null, 'opacity', 1.0);
             return circle;
         }
