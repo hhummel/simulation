@@ -1,7 +1,7 @@
 'use strict';
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 20.0;
+        let xscale = 5.0;
         let yscale = 20.0;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],
