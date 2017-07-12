@@ -158,7 +158,7 @@ class Trader{
     //Find the allowed trade amounts
     const [buyLimit, sellLimit] = this.tradeLimits(ticker);
 
-    //Compare this ticker with portfolio averages
+    //Compare this ticker with portfolio averages using destructuring syntax
     const {quality} = this.evaluate(ticker);
     const {quantity} = this.weighting(ticker);
 
@@ -177,7 +177,7 @@ class Trader{
       //[bidPrice, bidShares] = [undefined, undefined];
       //[askPrice, askShares] = [price - 2 * this.spread, sellLimit];
       [bidPrice, bidShares] = [Math.max(0, price - 4 * this.spread), buyLimit];
-      [askPrice, askShares] = [Math.max(0, price - 2 * this.spread), sellLimit];
+      [askPrice, askShares] = [Math.max(this.spread, price - 2 * this.spread), sellLimit];
     }
     return {'bidPrice': bidPrice, 'bidShares': bidShares, 'askPrice': askPrice, 'askShares': askShares};
   }
@@ -244,7 +244,7 @@ cash.forEach(arr => allCash += arr[0]);
 
 //Cycle
 const limit = 200;
-const dataLimit =10;
+const dataLimit = 20;
 let cycle = 0;
 let dataCycle = 0;
 
@@ -283,11 +283,11 @@ while (true) {
   if (trades.length === undefined || trades.length === 0 || cycle === limit) {
 
     //Output cumulative result
-    console.log("Stocks: ");
-    universe.forEach((stock, ticker) => console.log(ticker, stock.price));
-    console.log("Portfolios: ");
-    portfolio.forEach((port, name) => console.log(name, port));
-    console.log("Cash: ", cash);
+    //console.log("Stocks: ");
+    //universe.forEach((stock, ticker) => console.log(ticker, stock.price));
+    //console.log("Portfolios: ");
+    //portfolio.forEach((port, name) => console.log(name, port));
+    //console.log("Cash: ", cash);
     break;
   }
   const [newPrice, newPortfolio, newCash] = exchange.getUpdates(trades);
@@ -301,25 +301,39 @@ while (true) {
   console.log("Cycle: ", cycle);
   console.log("Trades: ", trades);
 
-  //Test that cash and share totals are conserved.  Replace with assert.
+  //Test that cash and share totals are conserved.
   let cashTotal = 0;
   cash.forEach(arr => cashTotal += arr[0]);
-  console.log("Cash total: ", cashTotal, " should equal ", allCash);
+  if (Math.abs(cashTotal - allCash) > 0.001) console.log("Cash total: ", cashTotal, " should equal ", allCash);
   const stockTotal = new Map([["S", 0], ["P", 0], ["Q", 0], ["R", 0]]);
   portfolio.forEach(trader => trader[0].forEach(arr => stockTotal.set(arr[0], stockTotal.get(arr[0]) + arr[1])));
-  stockTotal.forEach((total, ticker) => console.log("Stock Total: ", ticker, total, " should equal ", universe.get(ticker).outstanding));
+  stockTotal.forEach((total, ticker) => {
+    const test = universe.get(ticker).outstanding;
+    if (Math.abs(total - test) > 0.001) console.log("Stock Total: ", ticker, total, " should equal ", test);
+  });
+  let marketValue = 0;
+  universe.forEach(stock => marketValue += stock.outstanding * stock.price[0]);
+  console.log("Market value: ", marketValue);
 }
 
 //dataCycle
 if (dataCycle % 2 === 1) {
-  q.eps += 2;
-  q.book += 2;
-} else {
-  q.eps -= 2;
-  q.book -= 2;
-}
+  //s.eps += 0.5;
+  //s.book *= 1.1;
+  //p.eps *= 1.1;
+  //p.book *= 1.1;
 
-console.log("Data cycle Q eps: ", q.eps);
+} else {
+  //q.eps *= 1.5;
+  //q.book *= 1.5;
+  r.eps *= 1.5;
+  r.book *= 1.5;
+}
+console.log("\n*****************************************************************\n");
+console.log("Data cycle: ", dataCycle, " S eps: ", s.eps);
+console.log("Data cycle: ", dataCycle, " P eps: ", p.eps);
+console.log("Data cycle: ", dataCycle, " Q eps: ", q.eps);
+console.log("Data cycle: ", dataCycle, " R eps: ", r.eps);
 }
 CreateSVG(universe, portfolio, cash);
 
@@ -446,7 +460,7 @@ module.exports = Exchange;
 
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 5.0;
+        let xscale = 3.0;
         let yscale = 20.0;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],

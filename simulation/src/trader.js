@@ -64,7 +64,7 @@ class Trader{
     //Find the allowed trade amounts
     const [buyLimit, sellLimit] = this.tradeLimits(ticker);
 
-    //Compare this ticker with portfolio averages
+    //Compare this ticker with portfolio averages using destructuring syntax
     const {quality} = this.evaluate(ticker);
     const {quantity} = this.weighting(ticker);
 
@@ -83,7 +83,7 @@ class Trader{
       //[bidPrice, bidShares] = [undefined, undefined];
       //[askPrice, askShares] = [price - 2 * this.spread, sellLimit];
       [bidPrice, bidShares] = [Math.max(0, price - 4 * this.spread), buyLimit];
-      [askPrice, askShares] = [Math.max(0, price - 2 * this.spread), sellLimit];
+      [askPrice, askShares] = [Math.max(this.spread, price - 2 * this.spread), sellLimit];
     }
     return {'bidPrice': bidPrice, 'bidShares': bidShares, 'askPrice': askPrice, 'askShares': askShares};
   }
