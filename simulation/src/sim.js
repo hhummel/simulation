@@ -122,16 +122,16 @@ while (true) {
 
 //dataCycle
 if (dataCycle % 2 === 1) {
-  //s.eps += 0.5;
-  //s.book *= 1.1;
-  //p.eps *= 1.1;
-  //p.book *= 1.1;
+  s.eps += 3;
+  s.book *= 2;
+  p.eps *= 3;
+  p.book *= 3;
 
 } else {
-  //q.eps *= 1.5;
-  //q.book *= 1.5;
-  r.eps *= 1.5;
-  r.book *= 1.5;
+  s.eps -= 3;
+  s.book /= 2;
+  p.eps /= 3;
+  p.book /= 3;
 }
 console.log("\n*****************************************************************\n");
 console.log("Data cycle: ", dataCycle, " S eps: ", s.eps);

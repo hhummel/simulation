@@ -318,16 +318,16 @@ while (true) {
 
 //dataCycle
 if (dataCycle % 2 === 1) {
-  //s.eps += 0.5;
-  //s.book *= 1.1;
-  //p.eps *= 1.1;
-  //p.book *= 1.1;
+  s.eps += 3;
+  s.book *= 2;
+  p.eps *= 3;
+  p.book *= 3;
 
 } else {
-  //q.eps *= 1.5;
-  //q.book *= 1.5;
-  r.eps *= 1.5;
-  r.book *= 1.5;
+  s.eps -= 3;
+  s.book /= 2;
+  p.eps /= 3;
+  p.book /= 3;
 }
 console.log("\n*****************************************************************\n");
 console.log("Data cycle: ", dataCycle, " S eps: ", s.eps);
@@ -460,7 +460,7 @@ module.exports = Exchange;
 
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 3.0;
+        let xscale = 1.0;
         let yscale = 20.0;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],
