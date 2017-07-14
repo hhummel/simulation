@@ -7,10 +7,10 @@ const Trader = require('./trader.js');
 const Exchange = require('./exchange.js');
 const CreateSVG = require('./draw.js');
 
-const s = new Stock('S', 600, 5.0, -1.0, [10.0, 11.0, 12.0]);
-const p = new Stock('P', 900, 5.0, 2.0, [22.0, 21.0, 20.0]);
-const q = new Stock('Q', 1200, 35.0, 0.5, [30.0, 30.5, 31.0]);
-const r = new Stock('R', 225, 15.0, 0.5, [5.0, 3.0, 1.0]);
+const s = new Stock('S', 5900, 5.0, -1.0, [10.0, 11.0, 12.0]);
+const p = new Stock('P', 4300, 5.0, 2.0, [22.0, 21.0, 20.0]);
+const q = new Stock('Q', 6000, 35.0, 0.5, [30.0, 30.5, 31.0]);
+const r = new Stock('R', 5600, 15.0, 0.5, [5.0, 3.0, 1.0]);
 
 const universe = new Map([[s.ticker, s], [p.ticker, p], [q.ticker, q], [r.ticker, r]]);
 
@@ -25,6 +25,17 @@ const portfolio = new Map(
     ['Groucho', [[['S', 100], ['P', 200], ['R', 25]]]],
     ['Harpo', [[['P', 100], ['Q', 200], ['R', 25]]]],
     ['Zeppo', [[['S', 100], ['Q', 200], ['R', 25]]]],
+    ['Jermaine', [[['S', 300], ['P', 200], ['R', 125]]]],
+    ['Marlon', [[['P', 300], ['Q', 200], ['R', 125]]]],
+    ['Tito', [[['S', 400], ['Q', 200], ['R', 125]]]],
+    ['Michael', [[['S', 400], ['P', 200], ['R', 125]]]],
+    ['Randy', [[['P', 500], ['Q', 200], ['R', 125]]]],
+    ['Jackie', [[['S', 500], ['Q', 200], ['R', 125]]]],
+    ['Janet', [[['P', 600], ['Q', 200], ['R', 125]]]],
+    ['La Toya', [[['S', 600], ['Q', 200], ['R', 1125]]]],
+    ['Barry', [[['S', 1500], ['Q', 1200], ['R', 1125]]]],
+    ['Robin', [[['P', 1600], ['Q', 1200], ['R', 1125]]]],
+    ['Maurice', [[['S', 1600], ['Q', 1200], ['R', 1125]]]],
   ]
 
 );
@@ -40,6 +51,17 @@ const cash = new Map(
     ['Groucho', [500.00]],
     ['Harpo', [1000.00]],
     ['Zeppo', [1500.00]],
+    ['Jermaine', [2000.00]],
+    ['Marlon', [2500.00]],
+    ['Tito', [2500.00]],
+    ['Michael', [3000.00]],
+    ['Randy', [2500.00]],
+    ['Jackie', [2500.00]],
+    ['Janet', [3000.00]],
+    ['La Toya', [3500.00]],
+    ['Barry', [1500.00]],
+    ['Robin', [1000.00]],
+    ['Maurice', [1500.00]],
   ]
 );
 
@@ -67,6 +89,17 @@ while (true) {
   const g = new Trader('Groucho', [0.05, -1.5, -1], portfolio.get('Groucho')[0], cash.get('Groucho')[0], universe, 0.75); 
   const h = new Trader('Harpo', [0.1, -1, -1.5], portfolio.get('Harpo')[0], cash.get('Harpo')[0], universe, 0.75); 
   const z = new Trader('Zeppo', [0.15, -0.5, -0.5], portfolio.get('Zeppo')[0], cash.get('Zeppo')[0], universe, 0.75); 
+  const j0 = new Trader('Jermaine', [0.25, -2.5, -5], portfolio.get('Jermaine')[0], cash.get('Jermaine')[0], universe, 1.0); 
+  const j1 = new Trader('Marlon', [0.35, -1.5, -3], portfolio.get('Marlon')[0], cash.get('Marlon')[0], universe, 1.0); 
+  const j2 = new Trader('Tito', [0.25, -6.5, -6], portfolio.get('Tito')[0], cash.get('Tito')[0], universe, 0.5); 
+  const j3 = new Trader('Michael', [0.45, -4.5, -8], portfolio.get('Michael')[0], cash.get('Michael')[0], universe, 0.5); 
+  const j4 = new Trader('Randy', [0.65, -2.5, -4], portfolio.get('Randy')[0], cash.get('Randy')[0], universe, 0.5); 
+  const j5 = new Trader('Jackie', [0.55, -2.0, -3], portfolio.get('Jackie')[0], cash.get('Jackie')[0], universe, 0.75); 
+  const j6 = new Trader('Janet', [0.15, -1.5, -3.5], portfolio.get('Janet')[0], cash.get('Janet')[0], universe, 0.75); 
+  const j7 = new Trader('La Toya', [0.55, -1.5, -2.5], portfolio.get('La Toya')[0], cash.get('La Toya')[0], universe, 0.75);
+  const b0 = new Trader('Barry', [0.55, -2.0, -3], portfolio.get('Barry')[0], cash.get('Barry')[0], universe, 0.75); 
+  const b1 = new Trader('Robin', [0.15, -1.5, -3.5], portfolio.get('Robin')[0], cash.get('Robin')[0], universe, 0.75); 
+  const b2 = new Trader('Maurice', [0.55, -1.5, -2.5], portfolio.get('Maurice')[0], cash.get('Maurice')[0], universe, 0.75); 
   const traders = new Map(
     [
       [t.name, t], 
@@ -78,7 +111,21 @@ while (true) {
       [g.name, g], 
       [h.name, h], 
       [z.name, z],
+      [j0.name, j0],
+      [j1.name, j1],
+      [j2.name, j2],
+      [j3.name, j3],
+      [j4.name, j4],
+      [j5.name, j5],
+      [j6.name, j6],
+      [j7.name, j7],
+      [b0.name, b0],
+      [b1.name, b1],
+      [b2.name, b2],
     ]);
+
+  //Test section
+  traders.forEach(trader => trader.parameters[2] = 0);
 
   //Do trades
   const exchange = new Exchange(universe, traders);
@@ -122,16 +169,24 @@ while (true) {
 
 //dataCycle
 if (dataCycle % 2 === 1) {
-  s.eps += 3;
-  s.book *= 2;
-  p.eps *= 3;
-  p.book *= 3;
+  //s.eps += 10;
+  //s.book *= 10;
+  //p.eps *= 10;
+  //p.book *= 10;
+  //q.eps *= 10;
+  //q.book *= 10;
+  r.eps *= 10;
+  r.book *= 10;
 
 } else {
-  s.eps -= 3;
-  s.book /= 2;
-  p.eps /= 3;
-  p.book /= 3;
+  //s.eps -= 10;
+  //s.book /= 10;
+  //p.eps /= 10;
+  //p.book /= 10;
+  q.eps /= 10;
+  q.book /= 10;
+  r.eps /= 10;
+  r.book /= 10;
 }
 console.log("\n*****************************************************************\n");
 console.log("Data cycle: ", dataCycle, " S eps: ", s.eps);

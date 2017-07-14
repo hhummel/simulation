@@ -1,7 +1,7 @@
 'use strict';
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 1.0;
+        let xscale = 0.8;
         let yscale = 20.0;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],
@@ -61,11 +61,11 @@
         function createCircle(cx, cy, fill){
             let circle = document.createElementNS (xmlns, "circle");
             circle.setAttributeNS (null, 'stroke', "#000000");
-            circle.setAttributeNS (null, 'stroke-width', 2);
+            circle.setAttributeNS (null, 'stroke-width', 1);
             circle.setAttributeNS (null, 'cx', cx);
             circle.setAttributeNS (null, 'cy', cy);
             circle.setAttributeNS (null, 'fill', fill);
-            circle.setAttributeNS (null, 'r', '10');
+            circle.setAttributeNS (null, 'r', '5');
             circle.setAttributeNS (null, 'opacity', 1.0);
             return circle;
         }
