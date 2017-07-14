@@ -321,7 +321,7 @@ while (true) {
     ]);
 
   //Test section
-  traders.forEach(trader => trader.parameters[2] = 0);
+  //traders.forEach(trader => trader.parameters[2] = 0);
 
   //Do trades
   const exchange = new Exchange(universe, traders);
@@ -369,10 +369,10 @@ if (dataCycle % 2 === 1) {
   //s.book *= 10;
   //p.eps *= 10;
   //p.book *= 10;
-  //q.eps *= 10;
-  //q.book *= 10;
-  r.eps *= 10;
-  r.book *= 10;
+  q.eps *= 10;
+  q.book *= 10;
+  //r.eps *= 10;
+  //r.book *= 10;
 
 } else {
   //s.eps -= 10;
@@ -381,8 +381,8 @@ if (dataCycle % 2 === 1) {
   //p.book /= 10;
   q.eps /= 10;
   q.book /= 10;
-  r.eps /= 10;
-  r.book /= 10;
+  //r.eps /= 10;
+  //r.book /= 10;
 }
 console.log("\n*****************************************************************\n");
 console.log("Data cycle: ", dataCycle, " S eps: ", s.eps);
@@ -515,7 +515,7 @@ module.exports = Exchange;
 
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 0.8;
+        let xscale = 0.6;
         let yscale = 20.0;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],

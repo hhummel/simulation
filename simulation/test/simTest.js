@@ -194,6 +194,9 @@ describe("Market Simulation", function() {
       const trades = e.getTrades(book);
       const [newPrice, newPortfolio, newCash] = e.getUpdates(trades);
       e.commitUpdates(newPrice, newPortfolio, newCash);
+      universe.forEach((stock, ticker) => {
+        expect(stock.price[0]).to.equal(newPrice.get(ticker) === undefined ? stock.price[1] : newPrice.get(ticker));
+      }); 
     });
   });
 });
