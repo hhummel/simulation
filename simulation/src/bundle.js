@@ -198,6 +198,8 @@ module.exports = Trader;
 
 //Initialization
 
+let mom = true;
+
 const Stock = __webpack_require__(0);
 const Trader = __webpack_require__(1);
 const Exchange = __webpack_require__(3);
@@ -321,7 +323,7 @@ while (true) {
     ]);
 
   //Test section
-  //traders.forEach(trader => trader.parameters[2] = 0);
+  if (mom === false) traders.forEach(trader => trader.parameters[2] = 0);
 
   //Do trades
   const exchange = new Exchange(universe, traders);
@@ -365,24 +367,24 @@ while (true) {
 
 //dataCycle
 if (dataCycle % 2 === 1) {
-  //s.eps += 10;
-  //s.book *= 10;
-  //p.eps *= 10;
-  //p.book *= 10;
-  q.eps *= 10;
-  q.book *= 10;
-  //r.eps *= 10;
-  //r.book *= 10;
-
-} else {
-  //s.eps -= 10;
-  //s.book /= 10;
-  //p.eps /= 10;
-  //p.book /= 10;
+  s.eps += 10;
+  s.book *= 10;
+  p.eps *= 10;
+  p.book *= 10;
   q.eps /= 10;
   q.book /= 10;
-  //r.eps /= 10;
-  //r.book /= 10;
+  r.eps /= 10;
+  r.book /= 10;
+
+} else {
+  s.eps -= 10;
+  s.book /= 10;
+  p.eps /= 10;
+  p.book /= 10;
+  q.eps *= 10;
+  q.book *= 10;
+  r.eps *= 10;
+  r.book *= 10;
 }
 console.log("\n*****************************************************************\n");
 console.log("Data cycle: ", dataCycle, " S eps: ", s.eps);
@@ -515,8 +517,9 @@ module.exports = Exchange;
 
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 0.6;
+        let xscale = 3.0;
         let yscale = 20.0;
+        let filter = 1;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],
           'x': [[230, 53], [63, 270], [51, 170], [270, 270], [100, 133], [133, 83], [50, 200], [47, 47], [238, 53], [68, 270], [58, 170]],
@@ -561,7 +564,7 @@ module.exports = Exchange;
             const colors = new Map([['S', 'pink'], ['P', 'purple'], ['Q', 'blue'], ['R', 'red']]); 
   
             universe.forEach((stock, ticker) => stock.price.forEach((price, index) => {
-                circles.push(createCircle(xscale*(stock.price.length - index), yscale*price, colors.get(ticker)));
+                if (index % filter === 0) circles.push(createCircle(xscale*(stock.price.length - index), yscale*price, colors.get(ticker)));
               }));
 
             circles.forEach(circle => g.appendChild(circle));

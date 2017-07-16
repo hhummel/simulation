@@ -2,6 +2,8 @@
 
 //Initialization
 
+let mom = true;
+
 const Stock = require('./stock.js');
 const Trader = require('./trader.js');
 const Exchange = require('./exchange.js');
@@ -125,7 +127,7 @@ while (true) {
     ]);
 
   //Test section
-  //traders.forEach(trader => trader.parameters[2] = 0);
+  if (mom === false) traders.forEach(trader => trader.parameters[2] = 0);
 
   //Do trades
   const exchange = new Exchange(universe, traders);
@@ -169,24 +171,24 @@ while (true) {
 
 //dataCycle
 if (dataCycle % 2 === 1) {
-  //s.eps += 10;
-  //s.book *= 10;
-  //p.eps *= 10;
-  //p.book *= 10;
-  q.eps *= 10;
-  q.book *= 10;
-  //r.eps *= 10;
-  //r.book *= 10;
-
-} else {
-  //s.eps -= 10;
-  //s.book /= 10;
-  //p.eps /= 10;
-  //p.book /= 10;
+  s.eps += 10;
+  s.book *= 10;
+  p.eps *= 10;
+  p.book *= 10;
   q.eps /= 10;
   q.book /= 10;
-  //r.eps /= 10;
-  //r.book /= 10;
+  r.eps /= 10;
+  r.book /= 10;
+
+} else {
+  s.eps -= 10;
+  s.book /= 10;
+  p.eps /= 10;
+  p.book /= 10;
+  q.eps *= 10;
+  q.book *= 10;
+  r.eps *= 10;
+  r.book *= 10;
 }
 console.log("\n*****************************************************************\n");
 console.log("Data cycle: ", dataCycle, " S eps: ", s.eps);
