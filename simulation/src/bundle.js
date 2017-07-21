@@ -199,6 +199,7 @@ module.exports = Trader;
 //Initialization
 
 let mom = true;
+let impulse = 3.0;
 
 const Stock = __webpack_require__(0);
 const Trader = __webpack_require__(1);
@@ -207,10 +208,10 @@ const CreateSVG = __webpack_require__(4);
 const DataStore = __webpack_require__(5);
 
 const stockList = [
-  new Stock('S', 5900, 5.0, -1.0, [10.0, 11.0, 12.0]),
-  new Stock('P', 4300, 5.0, 2.0, [22.0, 21.0, 20.0]),
-  new Stock('Q', 6000, 35.0, 0.5, [30.0, 30.5, 31.0]),
-  new Stock('R', 5600, 15.0, 0.5, [5.0, 3.0, 1.0]),
+  new Stock('S', 9100, 5.0, -1.0, [10.0, 11.0, 12.0]),
+  new Stock('P', 14300, 5.0, 2.0, [22.0, 21.0, 20.0]),
+  new Stock('Q', 9200, 35.0, 0.5, [30.0, 30.5, 31.0]),
+  new Stock('R', 8800, 15.0, 0.5, [5.0, 3.0, 1.0]),
 ];
 
 const traderList = [
@@ -234,6 +235,16 @@ const traderList = [
   ['Barry', [0.55, -2.0, -3], 0.75], 
   ['Robin', [0.15, -1.5, -3.5], 0.75], 
   ['Maurice', [0.55, -1.5, -2.5], 0.75],
+  ['Donald', [1.0, -1.0, -5], 2.0],
+  ['Ivana', [2.0, -2.0, -2], 0.5],
+  ['Donald Jr', [1.0, -1.0, -7.0], 3.0],
+  ['Eric', [1.0, -1.0, -5], 2.0],
+  ['Ivanka', [2.0, -2.0, -2], 1.0],
+  ['Jared', [3.0, -3.0, -2], 2.0],
+  ['Marla', [3.0, -3.0, -1], 0.5],
+  ['Tiffany', [2.0, -2.0, -1], 0.5],
+  ['Melania', [1.0, -1.0, -1], 0.5],
+  ['Barron', [1.0, -1.0, -1], 0.5],
 ]; 
 
 const initialAssets = [
@@ -257,6 +268,16 @@ const initialAssets = [
     ['Barry', [[['S', 1500], ['Q', 1200], ['R', 1125]]], [1500.00]],
     ['Robin', [[['P', 1600], ['Q', 1200], ['R', 1125]]], [1000.00]],
     ['Maurice', [[['S', 1600], ['Q', 1200], ['R', 1125]]], [1500.00]],
+    ['Donald', [[]], [200000.00]],
+    ['Ivana', [[]], [5000.00]],
+    ['Donald Jr', [[]], [20000.00]],
+    ['Eric', [[]], [15000.00]],
+    ['Ivanka', [[['S', 1000], ['Q', 1000], ['R', 1000]]], [0.00]],
+    ['Jared', [[['P', 10000]]], [100.00]],
+    ['Marla', [[['S', 100], ['Q', 100], ['R', 100]]], [0.00]],
+    ['Tiffany', [[['S', 100], ['Q', 100], ['R', 100]]], [0.00]],
+    ['Melania', [[['S', 1000], ['Q', 1000], ['R', 1000]]], [20000.00]],
+    ['Barron', [[['S', 100], ['Q', 100], ['R', 100]]], [0.00]],
 ];
 
 const ds = new DataStore(stockList, traderList, initialAssets);
@@ -280,9 +301,19 @@ while (true) {
   const cash = ds.cash;
 
   //Make traders
-  const traderArray = traderList.map(t => [t[0], new Trader(t[0], t[1], portfolio.get(t[0])[0], cash.get(t[0])[0], universe, t[2])]);
+  const traderArray = traderList.map(t => [
+    t[0], 
+    new Trader(
+      t[0], 
+      t[1], 
+      portfolio.has(t[0]) ? portfolio.get(t[0])[0] : [], 
+      cash.has(t[0]) ? cash.get(t[0])[0] : 0, 
+      universe, 
+      t[2]
+    )
+  ]);
   const traders = new Map(traderArray);
-
+ 
   //Test section
   if (mom === false) traders.forEach(trader => trader.parameters[2] = 0);
 
@@ -328,24 +359,24 @@ while (true) {
 
 //dataCycle
 if (dataCycle % 2 === 1) {
-  ds.universe.get('S').eps += 10;
-  ds.universe.get('S').book *= 10;
-  ds.universe.get('P').eps *= 10;
-  ds.universe.get('P').book *= 10;
-  ds.universe.get('Q').eps /= 10;
-  ds.universe.get('Q').book /= 10;
-  ds.universe.get('R').eps /= 10;
-  ds.universe.get('R').book /= 10;
+  ds.universe.get('S').eps += impulse;
+  ds.universe.get('S').book *= impulse;
+  ds.universe.get('P').eps *= impulse;
+  ds.universe.get('P').book *= impulse;
+  ds.universe.get('Q').eps /= impulse;
+  ds.universe.get('Q').book /= impulse;
+  ds.universe.get('R').eps /= impulse;
+  ds.universe.get('R').book /= impulse;
 
 } else {
-  ds.universe.get('S').eps -= 10;
-  ds.universe.get('S').book /= 10;
-  ds.universe.get('P').eps /= 10;
-  ds.universe.get('P').book /= 10;
-  ds.universe.get('Q').eps *= 10;
-  ds.universe.get('Q').book *= 10;
-  ds.universe.get('R').eps *= 10;
-  ds.universe.get('R').book *= 10;
+  ds.universe.get('S').eps -= impulse;
+  ds.universe.get('S').book /= impulse;
+  ds.universe.get('P').eps /= impulse;
+  ds.universe.get('P').book /= impulse;
+  ds.universe.get('Q').eps *= impulse;
+  ds.universe.get('Q').book *= impulse;
+  ds.universe.get('R').eps *= impulse;
+  ds.universe.get('R').book *= impulse;
 }
 console.log("\n*****************************************************************\n");
 console.log("Data cycle: ", dataCycle, " S eps: ", ds.universe.get('S').eps);
@@ -478,8 +509,8 @@ module.exports = Exchange;
 
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 3.0;
-        let yscale = 20.0;
+        let xscale = 0.1;
+        let yscale = 3.0;
         let filter = 1;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],
