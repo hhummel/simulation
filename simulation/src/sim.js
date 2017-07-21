@@ -10,10 +10,12 @@ const Exchange = require('./exchange.js');
 const CreateSVG = require('./draw.js');
 const DataStore = require('./dataStore.js');
 
-const s = new Stock('S', 5900, 5.0, -1.0, [10.0, 11.0, 12.0]);
-const p = new Stock('P', 4300, 5.0, 2.0, [22.0, 21.0, 20.0]);
-const q = new Stock('Q', 6000, 35.0, 0.5, [30.0, 30.5, 31.0]);
-const r = new Stock('R', 5600, 15.0, 0.5, [5.0, 3.0, 1.0]);
+const stockList = [
+  new Stock('S', 5900, 5.0, -1.0, [10.0, 11.0, 12.0]),
+  new Stock('P', 4300, 5.0, 2.0, [22.0, 21.0, 20.0]),
+  new Stock('Q', 6000, 35.0, 0.5, [30.0, 30.5, 31.0]),
+  new Stock('R', 5600, 15.0, 0.5, [5.0, 3.0, 1.0]),
+];
 
 const traderList = [
   ['Tom',   [0.1, -3, -2], 1.0], 
@@ -61,7 +63,7 @@ const initialAssets = [
     ['Maurice', [[['S', 1600], ['Q', 1200], ['R', 1125]]], [1500.00]],
 ];
 
-const ds = new DataStore([s, p, q, r], traderList, initialAssets);
+const ds = new DataStore(stockList, traderList, initialAssets);
 
 let allCash = 0;
 ds.cash.forEach(arr => allCash += arr[0]);
