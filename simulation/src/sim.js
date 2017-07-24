@@ -174,7 +174,17 @@ while (dataCycle <= dataLimit) {
     cycle += 1;
   }
 
-  //dataCycle
+  //Output results
+  console.log("\n*****************************************************************\n");
+  console.log("Data cycle: ", dataCycle, " S eps: ", ds.universe.get('S').eps);
+  console.log("Data cycle: ", dataCycle, " P eps: ", ds.universe.get('P').eps);
+  console.log("Data cycle: ", dataCycle, " Q eps: ", ds.universe.get('Q').eps);
+  console.log("Data cycle: ", dataCycle, " R eps: ", ds.universe.get('R').eps);
+
+  //Save results to data store
+  ds.cycles.push(new Cycle(cycle, dataCycle++, ds.universe));
+
+  //Next dataCycle fundamental stock data
   if (dataCycle === 0) {
     ds.universe.get('S').eps += impulse/2;
     ds.universe.get('S').book *= impulse/2;
@@ -212,14 +222,6 @@ while (dataCycle <= dataLimit) {
     ds.universe.get('R').eps *= impulse/2;
     ds.universe.get('R').book *= impulse/2;
   }
-
-  console.log("\n*****************************************************************\n");
-  console.log("Data cycle: ", dataCycle, " S eps: ", ds.universe.get('S').eps);
-  console.log("Data cycle: ", dataCycle, " P eps: ", ds.universe.get('P').eps);
-  console.log("Data cycle: ", dataCycle, " Q eps: ", ds.universe.get('Q').eps);
-  console.log("Data cycle: ", dataCycle, " R eps: ", ds.universe.get('R').eps);
-
-  ds.cycles.push(new Cycle(cycle, dataCycle++, ds.universe));
 }
 CreateSVG(ds.universe, ds.portfolio, ds.cash, ds.cycles);
 

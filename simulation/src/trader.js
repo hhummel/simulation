@@ -80,8 +80,6 @@ class Trader{
       [askPrice, askShares] = [price + this.spread, sellLimit];
     }
      if (!quality && !quantity) {
-      //[bidPrice, bidShares] = [undefined, undefined];
-      //[askPrice, askShares] = [price - 2 * this.spread, sellLimit];
       [bidPrice, bidShares] = [Math.max(0, price - 4 * this.spread), buyLimit];
       [askPrice, askShares] = [Math.max(this.spread, price - 2 * this.spread), sellLimit];
     }
