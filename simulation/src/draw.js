@@ -1,9 +1,9 @@
 'use strict';
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 0.1;
-        let yscale = 3.0;
-        let filter = 1;
+        let xscale = 0.04;
+        let yscale = 1.5;
+        let filter = 10;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],
           'x': [[230, 53], [63, 270], [51, 170], [270, 270], [100, 133], [133, 83], [50, 200], [47, 47], [238, 53], [68, 270], [58, 170]],
@@ -11,7 +11,8 @@
         };
         let circles = [];
         
-        function CreateSVG (universe, portfolio, cash) {
+        function CreateSVG (universe, portfolio, cash, cycles) {
+            console.log("CreateSVG cycles: ", cycles);
             console.log("CreateSVG universe: ", universe);
             console.log("CreateSVG portfolio: ", portfolio);
             console.log("CreateSVG cash: ", cash);

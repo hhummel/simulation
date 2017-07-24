@@ -19,6 +19,8 @@ class DataStore{
 
     //traderList is an array of trader names, an array of evaluation parameters, and the trader's spread parameter
     this.traderList = traderList;
+
+    this.cycles = [];
   }
 }
 

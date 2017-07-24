@@ -199,19 +199,29 @@ module.exports = Trader;
 //Initialization
 
 let mom = true;
+
+//Price make asymmetric jumps
 let impulse = 3.0;
+
+//Price changes linearly
+//let impulse = 2.5;
+//let impulse = 2.0;
+
+//Price is smooth
+//let impulse = 1.0;
 
 const Stock = __webpack_require__(0);
 const Trader = __webpack_require__(1);
 const Exchange = __webpack_require__(3);
 const CreateSVG = __webpack_require__(4);
 const DataStore = __webpack_require__(5);
+const Cycle = __webpack_require__(6);
 
 const stockList = [
-  new Stock('S', 9100, 5.0, -1.0, [10.0, 11.0, 12.0]),
+  new Stock('S', 8200, 5.0, -1.0, [10.0, 11.0, 12.0]),
   new Stock('P', 14300, 5.0, 2.0, [22.0, 21.0, 20.0]),
-  new Stock('Q', 9200, 35.0, 0.5, [30.0, 30.5, 31.0]),
-  new Stock('R', 8800, 15.0, 0.5, [5.0, 3.0, 1.0]),
+  new Stock('Q', 8300, 35.0, 0.5, [30.0, 30.5, 31.0]),
+  new Stock('R', 7900, 15.0, 0.5, [5.0, 3.0, 1.0]),
 ];
 
 const traderList = [
@@ -245,6 +255,7 @@ const traderList = [
   ['Tiffany', [2.0, -2.0, -1], 0.5],
   ['Melania', [1.0, -1.0, -1], 0.5],
   ['Barron', [1.0, -1.0, -1], 0.5],
+  ['Index', [0, 0, -1.0], 1.0],
 ]; 
 
 const initialAssets = [
@@ -278,6 +289,7 @@ const initialAssets = [
     ['Tiffany', [[['S', 100], ['Q', 100], ['R', 100]]], [0.00]],
     ['Melania', [[['S', 1000], ['Q', 1000], ['R', 1000]]], [20000.00]],
     ['Barron', [[['S', 100], ['Q', 100], ['R', 100]]], [0.00]],
+    ['Index', [[]], [1000000.00]],
 ];
 
 const ds = new DataStore(stockList, traderList, initialAssets);
@@ -286,105 +298,126 @@ let allCash = 0;
 ds.cash.forEach(arr => allCash += arr[0]);
 
 //Cycle
-const limit = 200;
+const limit = 100000;
 const dataLimit = 20;
+const cycleLimit = 1000;
 let cycle = 0;
 let dataCycle = 0;
 
-while (dataCycle++ < dataLimit) { 
+while (dataCycle <= dataLimit) { 
+  let thisCycle = 0;
+  while (true) {
+    const universe = ds.universe;
+    const traderList = ds.traderList;
+    const portfolio = ds.portfolio;
+    const cash = ds.cash;
 
-while (true) {
-  cycle += 1;
-  const universe = ds.universe;
-  const traderList = ds.traderList;
-  const portfolio = ds.portfolio;
-  const cash = ds.cash;
-
-  //Make traders
-  const traderArray = traderList.map(t => [
-    t[0], 
-    new Trader(
+    //Make traders
+    const traderArray = traderList.map(t => [
       t[0], 
-      t[1], 
-      portfolio.has(t[0]) ? portfolio.get(t[0])[0] : [], 
-      cash.has(t[0]) ? cash.get(t[0])[0] : 0, 
-      universe, 
-      t[2]
-    )
-  ]);
-  const traders = new Map(traderArray);
+      new Trader(
+        t[0], 
+        t[1], 
+        portfolio.has(t[0]) ? portfolio.get(t[0])[0] : [], 
+        cash.has(t[0]) ? cash.get(t[0])[0] : 0, 
+        universe, 
+        t[2]
+      )
+    ]);
+    const traders = new Map(traderArray);
  
-  //Test section
-  if (mom === false) traders.forEach(trader => trader.parameters[2] = 0);
+    //Test section
+    if (mom === false) traders.forEach(trader => trader.parameters[2] = 0);
 
-  //Do trades
-  const exchange = new Exchange(ds.universe, traders);
-  const book = exchange.getOrderBook();
-  const trades = exchange.getTrades(book);
-  if (trades.length === undefined || trades.length === 0 || cycle === limit) {
+    //Do trades
+    const exchange = new Exchange(ds.universe, traders);
+    const book = exchange.getOrderBook();
+    const trades = exchange.getTrades(book);
+    if (trades.length === undefined || trades.length === 0 || thisCycle > cycleLimit) {
 
-    //Output cumulative result
-    //console.log("Stocks: ");
-    //universe.forEach((stock, ticker) => console.log(ticker, stock.price));
-    //console.log("Portfolios: ");
-    //portfolio.forEach((port, name) => console.log(name, port));
-    //console.log("Cash: ", cash);
-    break;
+      //Output cumulative result
+      //console.log("Stocks: ");
+      //universe.forEach((stock, ticker) => console.log(ticker, stock.price));
+      //console.log("Portfolios: ");
+      //portfolio.forEach((port, name) => console.log(name, port));
+      //console.log("Cash: ", cash);
+      break;
+    }
+    const [newPrice, newPortfolio, newCash] = exchange.getUpdates(trades);
+
+    //Update data structures
+    universe.forEach((stock, ticker) => stock.price.unshift(newPrice.has(ticker) ? newPrice.get(ticker) : stock.price[0]));
+    portfolio.forEach((array, name) => array.unshift(Array.from(newPortfolio.get(name))));
+    cash.forEach((array, name) => array.unshift(newCash.get(name)));
+
+    //Output cycle results
+    console.log("Cycle: ", cycle);
+    console.log("Trades: ", trades);
+
+    //Test that cash and share totals are conserved.
+    let cashTotal = 0;
+    cash.forEach(arr => cashTotal += arr[0]);
+    if (Math.abs(cashTotal - allCash) > 0.001) console.log("Cash total: ", cashTotal, " should equal ", allCash);
+    const stockTotal = new Map([["S", 0], ["P", 0], ["Q", 0], ["R", 0]]);
+    portfolio.forEach(trader => trader[0].forEach(arr => stockTotal.set(arr[0], stockTotal.get(arr[0]) + arr[1])));
+    stockTotal.forEach((total, ticker) => {
+      const test = universe.get(ticker).outstanding;
+      if (Math.abs(total - test) > 0.001) console.log("Stock Total: ", ticker, total, " should equal ", test);
+    });
+    let marketValue = 0;
+    universe.forEach(stock => marketValue += stock.outstanding * stock.price[0]);
+    console.log("Market value: ", marketValue);
+    cycle += 1;
   }
-  const [newPrice, newPortfolio, newCash] = exchange.getUpdates(trades);
 
-  //Update data structures
-  universe.forEach((stock, ticker) => stock.price.unshift(newPrice.has(ticker) ? newPrice.get(ticker) : stock.price[0]));
-  portfolio.forEach((array, name) => array.unshift(Array.from(newPortfolio.get(name))));
-  cash.forEach((array, name) => array.unshift(newCash.get(name)));
+  //dataCycle
+  if (dataCycle === 0) {
+    ds.universe.get('S').eps += impulse/2;
+    ds.universe.get('S').book *= impulse/2;
+    ds.universe.get('P').eps *= impulse/2;
+    ds.universe.get('P').book *= impulse/2;
+    ds.universe.get('Q').eps /= impulse/2;
+    ds.universe.get('Q').book /= impulse/2;
+    ds.universe.get('R').eps /= impulse/2;
+    ds.universe.get('R').book /= impulse/2;
+  } else if (dataCycle > 0 && dataCycle < dataLimit && dataCycle % 2 === 1) {
+    ds.universe.get('S').eps -= impulse;
+    ds.universe.get('S').book /= impulse;
+    ds.universe.get('P').eps /= impulse;
+    ds.universe.get('P').book /= impulse;
+    ds.universe.get('Q').eps *= impulse;
+    ds.universe.get('Q').book *= impulse;
+    ds.universe.get('R').eps *= impulse;
+    ds.universe.get('R').book *= impulse;
+  } else if (dataCycle > 0 && dataCycle < dataLimit && dataCycle % 2 === 0) {
+    ds.universe.get('S').eps += impulse;
+    ds.universe.get('S').book *= impulse;
+    ds.universe.get('P').eps *= impulse;
+    ds.universe.get('P').book *= impulse;
+    ds.universe.get('Q').eps /= impulse;
+    ds.universe.get('Q').book /= impulse;
+    ds.universe.get('R').eps /= impulse;
+    ds.universe.get('R').book /= impulse;
+  } else {
+    ds.universe.get('S').eps -= impulse/2;
+    ds.universe.get('S').book /= impulse/2;
+    ds.universe.get('P').eps /= impulse/2;
+    ds.universe.get('P').book /= impulse/2;
+    ds.universe.get('Q').eps *= impulse/2;
+    ds.universe.get('Q').book *= impulse/2;
+    ds.universe.get('R').eps *= impulse/2;
+    ds.universe.get('R').book *= impulse/2;
+  }
 
-  //Output cycle results
-  console.log("Cycle: ", cycle);
-  console.log("Trades: ", trades);
+  console.log("\n*****************************************************************\n");
+  console.log("Data cycle: ", dataCycle, " S eps: ", ds.universe.get('S').eps);
+  console.log("Data cycle: ", dataCycle, " P eps: ", ds.universe.get('P').eps);
+  console.log("Data cycle: ", dataCycle, " Q eps: ", ds.universe.get('Q').eps);
+  console.log("Data cycle: ", dataCycle, " R eps: ", ds.universe.get('R').eps);
 
-  //Test that cash and share totals are conserved.
-  let cashTotal = 0;
-  cash.forEach(arr => cashTotal += arr[0]);
-  if (Math.abs(cashTotal - allCash) > 0.001) console.log("Cash total: ", cashTotal, " should equal ", allCash);
-  const stockTotal = new Map([["S", 0], ["P", 0], ["Q", 0], ["R", 0]]);
-  portfolio.forEach(trader => trader[0].forEach(arr => stockTotal.set(arr[0], stockTotal.get(arr[0]) + arr[1])));
-  stockTotal.forEach((total, ticker) => {
-    const test = universe.get(ticker).outstanding;
-    if (Math.abs(total - test) > 0.001) console.log("Stock Total: ", ticker, total, " should equal ", test);
-  });
-  let marketValue = 0;
-  universe.forEach(stock => marketValue += stock.outstanding * stock.price[0]);
-  console.log("Market value: ", marketValue);
+  ds.cycles.push(new Cycle(cycle, dataCycle++, ds.universe));
 }
-
-//dataCycle
-if (dataCycle % 2 === 1) {
-  ds.universe.get('S').eps += impulse;
-  ds.universe.get('S').book *= impulse;
-  ds.universe.get('P').eps *= impulse;
-  ds.universe.get('P').book *= impulse;
-  ds.universe.get('Q').eps /= impulse;
-  ds.universe.get('Q').book /= impulse;
-  ds.universe.get('R').eps /= impulse;
-  ds.universe.get('R').book /= impulse;
-
-} else {
-  ds.universe.get('S').eps -= impulse;
-  ds.universe.get('S').book /= impulse;
-  ds.universe.get('P').eps /= impulse;
-  ds.universe.get('P').book /= impulse;
-  ds.universe.get('Q').eps *= impulse;
-  ds.universe.get('Q').book *= impulse;
-  ds.universe.get('R').eps *= impulse;
-  ds.universe.get('R').book *= impulse;
-}
-console.log("\n*****************************************************************\n");
-console.log("Data cycle: ", dataCycle, " S eps: ", ds.universe.get('S').eps);
-console.log("Data cycle: ", dataCycle, " P eps: ", ds.universe.get('P').eps);
-console.log("Data cycle: ", dataCycle, " Q eps: ", ds.universe.get('Q').eps);
-console.log("Data cycle: ", dataCycle, " R eps: ", ds.universe.get('R').eps);
-}
-CreateSVG(ds.universe, ds.portfolio, ds.cash);
+CreateSVG(ds.universe, ds.portfolio, ds.cash, ds.cycles);
 
 
 
@@ -509,9 +542,9 @@ module.exports = Exchange;
 
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 0.1;
-        let yscale = 3.0;
-        let filter = 1;
+        let xscale = 0.04;
+        let yscale = 1.5;
+        let filter = 10;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],
           'x': [[230, 53], [63, 270], [51, 170], [270, 270], [100, 133], [133, 83], [50, 200], [47, 47], [238, 53], [68, 270], [58, 170]],
@@ -519,7 +552,8 @@ module.exports = Exchange;
         };
         let circles = [];
         
-        function CreateSVG (universe, portfolio, cash) {
+        function CreateSVG (universe, portfolio, cash, cycles) {
+            console.log("CreateSVG cycles: ", cycles);
             console.log("CreateSVG universe: ", universe);
             console.log("CreateSVG portfolio: ", portfolio);
             console.log("CreateSVG cash: ", cash);
@@ -638,11 +672,29 @@ class DataStore{
 
     //traderList is an array of trader names, an array of evaluation parameters, and the trader's spread parameter
     this.traderList = traderList;
+
+    this.cycles = [];
   }
 }
 
 module.exports = DataStore;
 
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+class Cycle{
+  constructor(cycleIndex, dataCycleIndex, universe) {
+    this.cycleIndex = cycleIndex;
+    this.dataCycleIndex = dataCycleIndex;
+    this.stockData = new Map();
+    universe.forEach((stock, ticker) => this.stockData.set(ticker, [stock.eps, stock.book, stock.price[0]]));
+  }
+}
+
+module.exports = Cycle;
 
 
 /***/ })
