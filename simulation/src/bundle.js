@@ -196,10 +196,11 @@ module.exports = Trader;
 
 //Initialization
 
-let mom = true;
+let mom = 1.0;
 
 //Price make asymmetric jumps
-let impulse = 3.0;
+let impulse = 5.0;
+//let impulse = 3.0;
 
 //Price changes linearly
 //let impulse = 2.5;
@@ -297,7 +298,7 @@ ds.cash.forEach(arr => allCash += arr[0]);
 
 //Cycle
 const limit = 100000;
-const dataLimit = 20;
+const dataLimit = 100;
 const cycleLimit = 1000;
 let cycle = 0;
 let dataCycle = 0;
@@ -325,7 +326,7 @@ while (dataCycle <= dataLimit) {
     const traders = new Map(traderArray);
  
     //Test section
-    if (mom === false) traders.forEach(trader => trader.parameters[2] = 0);
+    traders.forEach(trader => trader.parameters[2] *= mom);
 
     //Do trades
     const exchange = new Exchange(ds.universe, traders);
@@ -376,7 +377,7 @@ while (dataCycle <= dataLimit) {
   console.log("Data cycle: ", dataCycle, " R eps: ", ds.universe.get('R').eps);
 
   //Save results to data store
-  ds.cycles.push(new Cycle(cycle, dataCycle++, ds.universe));
+  ds.cycles.push(new Cycle(cycle, dataCycle, ds.universe));
 
   //Next dataCycle fundamental stock data
   if (dataCycle === 0) {
@@ -416,6 +417,7 @@ while (dataCycle <= dataLimit) {
     ds.universe.get('R').eps *= impulse/2;
     ds.universe.get('R').book *= impulse/2;
   }
+  dataCycle += 1;
 }
 CreateSVG(ds.universe, ds.portfolio, ds.cash, ds.cycles);
 
@@ -542,8 +544,8 @@ module.exports = Exchange;
 
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 0.04;
-        let yscale = 1.5;
+        let xscale = 0.01;
+        let yscale = 0.25;
         let filter = 10;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],

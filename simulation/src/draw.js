@@ -1,8 +1,8 @@
 'use strict';
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 0.04;
-        let yscale = 1.5;
+        let xscale = 0.01;
+        let yscale = 0.25;
         let filter = 10;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],
