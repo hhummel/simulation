@@ -30,43 +30,44 @@ const stockList = [
 ];
 
 const traderList = [
-  ['Tom',   [0.1, -3, -2], 1.0], 
-  ['Dick',  [0.2, -2, -3], 1.0], 
-  ['Harry', [0.3, -1, -1], 1.0], 
-  ['Curly', [0.2, -6, -4], 0.5], 
-  ['Moe',   [0.4, -4, -6], 0.5], 
-  ['Larry', [0.6, -2, -2], 0.5], 
-  ['Groucho', [0.05, -1.5, -1], 0.75], 
-  ['Harpo', [0.1, -1, -1.5], 0.75], 
-  ['Zeppo', [0.15, -0.5, -0.5], 0.75], 
-  ['Jermaine', [0.25, -2.5, -5], 1.0], 
-  ['Marlon', [0.35, -1.5, -3], 1.0], 
-  ['Tito', [0.25, -6.5, -6], 0.5], 
-  ['Michael', [0.45, -4.5, -8], 0.5], 
-  ['Randy', [0.65, -2.5, -4], 0.5], 
-  ['Jackie', [0.55, -2.0, -3], 0.75], 
-  ['Janet', [0.15, -1.5, -3.5], 0.75], 
-  ['La Toya', [0.55, -1.5, -2.5], 0.75],
-  ['Barry', [0.55, -2.0, -3], 0.75], 
-  ['Robin', [0.15, -1.5, -3.5], 0.75], 
-  ['Maurice', [0.55, -1.5, -2.5], 0.75],
-  ['Donald', [1.0, -1.0, -5], 2.0],
-  ['Ivana', [2.0, -2.0, -2], 0.5],
-  ['Donald Jr', [1.0, -1.0, -7.0], 3.0],
-  ['Eric', [1.0, -1.0, -5], 2.0],
-  ['Ivanka', [2.0, -2.0, -2], 1.0],
-  ['Jared', [3.0, -3.0, -2], 2.0],
-  ['Marla', [3.0, -3.0, -1], 0.5],
-  ['Tiffany', [2.0, -2.0, -1], 0.5],
-  ['Melania', [1.0, -1.0, -1], 0.5],
-  ['Barron', [1.0, -1.0, -1], 0.5],
-  ['Index', [0, 0, -1.0], 1.0],
+  ['Bill',   [0.1, -3, -2, -2], 1.0], 
+  ['Hillary',  [0.2, -2, -3, -3], 1.0], 
+  ['Chelsea', [0.3, -1, -1, -1], 1.0], 
+  ['Curly', [0.2, -6, -4, -4], 0.5], 
+  ['Moe',   [0.4, -4, -6, -6], 0.5], 
+  ['Larry', [0.6, -2, -2, -2], 0.5], 
+  ['Groucho', [0.05, -1.5, -1, -1], 0.75], 
+  ['Harpo', [0.1, -1, -1.5, -1.5], 0.75], 
+  ['Zeppo', [0.15, -0.5, -0.5, -0.5], 0.75], 
+  ['Jermaine', [0.25, -2.5, -5, -5], 1.0], 
+  ['Marlon', [0.35, -1.5, -3, -3], 1.0], 
+  ['Tito', [0.25, -6.5, -6, -6], 0.5], 
+  ['Michael', [0.45, -4.5, -8, -8], 0.5], 
+  ['Randy', [0.65, -2.5, -4, -4], 0.5], 
+  ['Jackie', [0.55, -2.0, -3, -3], 0.75], 
+  ['Janet', [0.15, -1.5, -3.5, -3.5], 0.75], 
+  ['La Toya', [0.55, -1.5, -2.5, -2.5], 0.75],
+  ['Barry', [0.55, -2.0, -3, -3], 0.75], 
+  ['Robin', [0.15, -1.5, -3.5, -3.5], 0.75], 
+  ['Maurice', [0.55, -1.5, -2.5, -2.5], 0.75],
+  ['Donald', [1.0, -1.0, -5, -5], 2.0],
+  ['Ivana', [2.0, -2.0, -2, -2], 0.5],
+  ['Donald Jr', [1.0, -1.0, -7.0, -7], 3.0],
+  ['Eric', [1.0, -1.0, -5, -5], 2.0],
+  ['Ivanka', [2.0, -2.0, -2, -2], 1.0],
+  ['Jared', [3.0, -3.0, -2, -2], 2.0],
+  ['Marla', [3.0, -3.0, -1, -1], 0.5],
+  ['Tiffany', [2.0, -2.0, -1, -1], 0.5],
+  ['Melania', [1.0, -1.0, -1, -1], 0.5],
+  ['Barron', [1.0, -1.0, -1, -1], 0.5],
+  //['Index', [0, 0, -1.0, -1], 1.0],
+  ['Index', [1.0, -1.0, -5.0, -5], 2.0],
 ]; 
 
 const initialAssets = [
-    ['Tom', [[['S', 100], ['P', 200], ['R', 25]]], [500.00]],
-    ['Dick', [[['P', 100], ['Q', 200], ['R', 25]]], [1000.00]],
-    ['Harry', [[['S', 100], ['Q', 200], ['R', 25]]], [1500.00]],
+    ['Bill', [[['S', 100], ['P', 200], ['R', 25]]], [500.00]],
+    ['Hillary', [[['P', 100], ['Q', 200], ['R', 25]]], [1000.00]],
+    ['Chelsea', [[['S', 100], ['Q', 200], ['R', 25]]], [1500.00]],
     ['Curly', [[['S', 100], ['P', 200], ['R', 25]]], [500.00]],
     ['Moe', [[['P', 100], ['Q', 200], ['R', 25]]], [1000.00]],
     ['Larry', [[['S', 100], ['Q', 200], ['R', 25]]], [1500.00]],
@@ -156,8 +157,8 @@ while (dataCycle <= dataLimit) {
     cash.forEach((array, name) => array.unshift(newCash.get(name)));
 
     //Output cycle results
-    console.log("Cycle: ", cycle);
-    console.log("Trades: ", trades);
+    //console.log("Cycle: ", cycle);
+    //console.log("Trades: ", trades);
 
     //Test that cash and share totals are conserved.
     let cashTotal = 0;
@@ -171,7 +172,7 @@ while (dataCycle <= dataLimit) {
     });
     let marketValue = 0;
     universe.forEach(stock => marketValue += stock.outstanding * stock.price[0]);
-    console.log("Market value: ", marketValue);
+    //console.log("Market value: ", marketValue);
     cycle += 1;
   }
 
@@ -184,6 +185,21 @@ while (dataCycle <= dataLimit) {
 
   //Save results to data store
   ds.cycles.push(new Cycle(cycle, dataCycle, ds.universe));
+
+  const wealth = new Map();
+  ds.cash.forEach((balance, name) => wealth.set(name, balance[0]));
+  console.log("Cash:");
+  ds.cash.forEach((balance, name) => console.log(name, ": ", balance[0]));
+  //ds.portfolio.forEach((trader, name) => {
+  //  console.log(name, "Portfolio value: ", trader[0].reduce((acc, stock) => acc + stock[1]*ds.universe.get(stock[0]).price[0], 0));
+  //});
+  ds.portfolio.forEach((trader, name) => {
+    wealth.set(name, wealth.get(name) + trader[0].reduce((acc, stock) => acc + stock[1]*ds.universe.get(stock[0]).price[0], 0));
+  });
+  //ds.portfolio.forEach((trader, name) => {
+  //  console.log(name, "Portfolio holdings: ", trader[0].map(stock => [stock[1], ds.universe.get(stock[0]).price[0]]));
+  //});
+  console.log("Wealth: ", wealth);
 
   //Next dataCycle fundamental stock data
   if (dataCycle === 0) {
@@ -223,7 +239,7 @@ while (dataCycle <= dataLimit) {
     ds.universe.get('R').eps *= impulse/2;
     ds.universe.get('R').book *= impulse/2;
   }
-  dataCycle += 1;
+  dataCycle += 1; 
 }
 CreateSVG(ds.universe, ds.portfolio, ds.cash, ds.cycles);
 

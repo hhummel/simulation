@@ -26,10 +26,11 @@ class Trader{
     let scores = [];
     let score = 0;
     this.universe.forEach((stock, tick) => {
+      const mom = this.parameters.length > 3 && stock.price[0] - stock.price[1] < 0 ? this.parameters[3] : this.parameters[2];
       const scr = (
         this.parameters[0] * stock.price[0]/stock.book +
         this.parameters[1] * stock.eps/(0.1 + stock.price[0]) +
-        this.parameters[2] * (stock.price[0] - stock.price[1]) / (0.1 + stock.price[1]));
+        mom * (stock.price[0] - stock.price[1]) / (0.1 + stock.price[1]));
         if (ticker === tick) score = scr;
         if (this.portfolio.has(tick)) scores.push(scr);
     });
