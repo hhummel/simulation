@@ -102,6 +102,9 @@ class Trader{
     this.cash = cash;
     this.universe = universe;
     this.spread = spread;
+    this.positive = 0;
+    this.neutral = 0;
+    this.negative = 0;
   }
 
   tradeLimits(ticker){
@@ -130,7 +133,8 @@ class Trader{
     });
 
     //Compare to the portfolio averages
-    const quality = this.portfolio.size * score <= scores.reduce((x, acc) => x + acc , 0);
+    const qualityInertia = this.parameters[4] === undefined ? 1.0 : this.parameters[4];
+    const quality = this.portfolio.size * score * qualityInertia <= scores.reduce((x, acc) => x + acc , 0);
     return {'quality': quality, 'score': score, 'scores': scores};
   }
 
@@ -148,7 +152,8 @@ class Trader{
     });
 
     //Compare to the portfolio averages
-    const quantity = this.portfolio.size * value <= values.reduce((x, acc) => x + acc, 0);
+    const quantityInertia = this.parameters[5] === undefined ? 1.0 : this.parameters[5];
+    const quantity = this.portfolio.size * value * quantityInertia <= values.reduce((x, acc) => x + acc, 0);
     return {'quantity': quantity, 'value': value, 'values': values};
   }
 
@@ -163,20 +168,26 @@ class Trader{
     const {quality} = this.evaluate(ticker);
     const {quantity} = this.weighting(ticker);
 
+    //console.log("Quality: ", quality, this.evaluate(ticker));
+    //console.log("Quantity: ", quantity, this.weighting(ticker));
+
     //Compute bid/ask price and share
     let askPrice, askShares, bidPrice, bidShares;
     
     if (quality && quantity) {
       [bidPrice, bidShares] = [price + 2 * this.spread, buyLimit];
       [askPrice, askShares] = [price + 4 * this.spread, sellLimit];
+      this.positive += 1;
     }
     if ((quality && !quantity) || (!quality && quantity)){
       [bidPrice, bidShares] = [Math.max(0, price - this.spread), buyLimit];
       [askPrice, askShares] = [price + this.spread, sellLimit];
+      this.neutral += 1;
     }
      if (!quality && !quantity) {
       [bidPrice, bidShares] = [Math.max(0, price - 4 * this.spread), buyLimit];
       [askPrice, askShares] = [Math.max(this.spread, price - 2 * this.spread), sellLimit];
+      this.negative += 1;
     }
     return {'bidPrice': bidPrice, 'bidShares': bidShares, 'askPrice': askPrice, 'askShares': askShares};
   }
@@ -210,6 +221,8 @@ let impulse = 5.0;
 //Price is smooth
 //let impulse = 1.0;
 
+
+
 const Stock = __webpack_require__(0);
 const Trader = __webpack_require__(1);
 const Exchange = __webpack_require__(3);
@@ -225,37 +238,37 @@ const stockList = [
 ];
 
 const traderList = [
-  ['Bill',   [0.1, -3, -2, -2], 1.0], 
-  ['Hillary',  [0.2, -2, -3, -3], 1.0], 
-  ['Chelsea', [0.3, -1, -1, -1], 1.0], 
-  ['Curly', [0.2, -6, -4, -4], 0.5], 
-  ['Moe',   [0.4, -4, -6, -6], 0.5], 
-  ['Larry', [0.6, -2, -2, -2], 0.5], 
-  ['Groucho', [0.05, -1.5, -1, -1], 0.75], 
-  ['Harpo', [0.1, -1, -1.5, -1.5], 0.75], 
-  ['Zeppo', [0.15, -0.5, -0.5, -0.5], 0.75], 
-  ['Jermaine', [0.25, -2.5, -5, -5], 1.0], 
-  ['Marlon', [0.35, -1.5, -3, -3], 1.0], 
-  ['Tito', [0.25, -6.5, -6, -6], 0.5], 
-  ['Michael', [0.45, -4.5, -8, -8], 0.5], 
-  ['Randy', [0.65, -2.5, -4, -4], 0.5], 
-  ['Jackie', [0.55, -2.0, -3, -3], 0.75], 
-  ['Janet', [0.15, -1.5, -3.5, -3.5], 0.75], 
-  ['La Toya', [0.55, -1.5, -2.5, -2.5], 0.75],
-  ['Barry', [0.55, -2.0, -3, -3], 0.75], 
-  ['Robin', [0.15, -1.5, -3.5, -3.5], 0.75], 
-  ['Maurice', [0.55, -1.5, -2.5, -2.5], 0.75],
-  ['Donald', [1.0, -1.0, -5, -5], 2.0],
-  ['Ivana', [2.0, -2.0, -2, -2], 0.5],
-  ['Donald Jr', [1.0, -1.0, -7.0, -7], 3.0],
-  ['Eric', [1.0, -1.0, -5, -5], 2.0],
-  ['Ivanka', [2.0, -2.0, -2, -2], 1.0],
-  ['Jared', [3.0, -3.0, -2, -2], 2.0],
-  ['Marla', [3.0, -3.0, -1, -1], 0.5],
-  ['Tiffany', [2.0, -2.0, -1, -1], 0.5],
-  ['Melania', [1.0, -1.0, -1, -1], 0.5],
-  ['Barron', [1.0, -1.0, -1, -1], 0.5],
-  ['Index', [0, 0, -1.0, -1, -1], 1.0],
+  ['Bill',   [0.1, -3, -2, -2, 1.02, 1.02], 1.0], 
+  ['Hillary',  [0.2, -2, -3, -3, 1.02, 1.02], 1.0], 
+  ['Chelsea', [0.3, -1, -1, -1, 1.02, 1.02], 1.0], 
+  ['Curly', [0.2, -6, -4, -4, 1.02, 1.02], 0.5], 
+  ['Moe',   [0.4, -4, -6, -6, 1.02, 1.02], 0.5], 
+  ['Larry', [0.6, -2, -2, -2, 1.02, 1.02], 0.5], 
+  ['Groucho', [0.05, -1.5, -1, -1, 1.02, 1.02], 0.75], 
+  ['Harpo', [0.1, -1, -1.5, -1.5, 1.02, 1.02], 0.75], 
+  ['Zeppo', [0.15, -0.5, -0.5, -0.5, 1.02, 1.02], 0.75], 
+  ['Jermaine', [0.25, -2.5, -5, -5, 1.02, 1.02], 1.0], 
+  ['Marlon', [0.35, -1.5, -3, -3, 1.02, 1.02], 1.0], 
+  ['Tito', [0.25, -6.5, -6, -6, 1.02, 1.02], 0.5], 
+  ['Michael', [0.45, -4.5, -8, -8, 1.02, 1.02], 0.5], 
+  ['Randy', [0.65, -2.5, -4, -4, 1.02, 1.02], 0.5], 
+  ['Jackie', [0.55, -2.0, -3, -3, 1.02, 1.02], 0.75], 
+  ['Janet', [0.15, -1.5, -3.5, -3.5, 1.02, 1.02], 0.75], 
+  ['La Toya', [0.55, -1.5, -2.5, -2.5, 1.02, 1.02], 0.75],
+  ['Barry', [0.55, -2.0, -3, -3, 1.02, 1.02], 0.75], 
+  ['Robin', [0.15, -1.5, -3.5, -3.5, 1.02, 1.02], 0.75], 
+  ['Maurice', [0.55, -1.5, -2.5, -2.5, 1.02, 1.02], 0.75],
+  ['Donald', [1.0, -1.0, -5, -5, 1.02, 1.02], 2.0],
+  ['Ivana', [2.0, -2.0, -2, -2, 1.02, 1.02], 0.5],
+  ['Donald Jr', [1.0, -1.0, -7.0, -7, 1.02, 1.02], 3.0],
+  ['Eric', [1.0, -1.0, -5, -5, 1.02, 1.02], 2.0],
+  ['Ivanka', [2.0, -2.0, -2, -2, 1.02, 1.02], 1.0],
+  ['Jared', [3.0, -3.0, -2, -2, 1.02, 1.02], 2.0],
+  ['Marla', [3.0, -3.0, -1, -1, 1.02, 1.02], 0.5],
+  ['Tiffany', [2.0, -2.0, -1, -1, 1.02, 1.02], 0.5],
+  ['Melania', [1.0, -1.0, -1, -1, 1.02, 1.02], 0.5],
+  ['Barron', [1.0, -1.0, -1, -1, 1.02, 1.02], 0.5],
+  ['Index', [0, 0, -1.0, -1, -1, 1.02, 1.02], 1.0],
   //['Index', [1.0, -1.0, -5.0, -5], 2.0],
 ]; 
 
@@ -285,8 +298,8 @@ const initialAssets = [
     ['Donald Jr', [[]], [20000.00]],
     ['Eric', [[]], [15000.00]],
     ['Ivanka', [[['S', 1000], ['Q', 1000], ['R', 1000]]], [0.00]],
-    //['Jared', [[['P', 10000]]], [100.00]],
-    ['Jared', [[['S', 1000], ['P', 10000], ['Q', 1000], ['R', 1000]]], [100.00]],
+    ['Jared', [[['P', 10000]]], [100.00]],
+    //['Jared', [[['S', 1000], ['P', 10000], ['Q', 1000], ['R', 1000]]], [100.00]],
     ['Marla', [[['S', 100], ['Q', 100], ['R', 100]]], [0.00]],
     ['Tiffany', [[['S', 100], ['Q', 100], ['R', 100]]], [0.00]],
     ['Melania', [[['S', 1000], ['Q', 1000], ['R', 1000]]], [20000.00]],
@@ -307,7 +320,13 @@ let cycle = 0;
 let dataCycle = 0;
 
 while (dataCycle <= dataLimit) { 
+
+  //Total positive, neutral, negative for the cycle
+  let positive = 0;
+  let neutral = 0;
+  let negative = 0;
   let thisCycle = 0;
+
   while (true) {
     const universe = ds.universe;
     const traderList = ds.traderList;
@@ -369,6 +388,15 @@ while (dataCycle <= dataLimit) {
     let marketValue = 0;
     universe.forEach(stock => marketValue += stock.outstanding * stock.price[0]);
     //console.log("Market value: ", marketValue);
+
+    //Output positive, neutral, negative
+    traders.forEach((trader, name) => {
+      //console.log(name, trader.positive, trader.neutral, trader.negative);
+      positive += trader.positive;
+      neutral += trader.neutral;
+      negative += trader.negative;
+    });
+
     cycle += 1;
   }
 
@@ -384,8 +412,8 @@ while (dataCycle <= dataLimit) {
 
   const wealth = new Map();
   ds.cash.forEach((balance, name) => wealth.set(name, balance[0]));
-  console.log("Cash:");
-  ds.cash.forEach((balance, name) => console.log(name, ": ", balance[0]));
+  //console.log("Cash:");
+  //ds.cash.forEach((balance, name) => console.log(name, ": ", balance[0]));
   //ds.portfolio.forEach((trader, name) => {
   //  console.log(name, "Portfolio value: ", trader[0].reduce((acc, stock) => acc + stock[1]*ds.universe.get(stock[0]).price[0], 0));
   //});
@@ -396,6 +424,8 @@ while (dataCycle <= dataLimit) {
   //  console.log(name, "Portfolio holdings: ", trader[0].map(stock => [stock[1], ds.universe.get(stock[0]).price[0]]));
   //});
   console.log("Wealth: ", wealth);
+
+  console.log("Positive: ", positive, " Neutral: ", neutral, " Negative: ", negative);
 
   //Next dataCycle fundamental stock data
   if (dataCycle === 0) {
@@ -562,8 +592,8 @@ module.exports = Exchange;
 
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 0.01;
-        let yscale = 0.25;
+        let xscale = 0.04;
+        let yscale = 1.0;
         let filter = 10;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],
