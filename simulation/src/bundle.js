@@ -231,44 +231,44 @@ const DataStore = __webpack_require__(5);
 const Cycle = __webpack_require__(6);
 
 const stockList = [
-  new Stock('S', 8200, 5.0, -1.0, [10.0, 11.0, 12.0]),
+  new Stock('S', 8200, 10.0, -4.0, [10.0, 11.0, 12.0]),
   new Stock('P', 14300, 5.0, 2.0, [22.0, 21.0, 20.0]),
   new Stock('Q', 8300, 35.0, 0.5, [30.0, 30.5, 31.0]),
   new Stock('R', 7900, 15.0, 0.5, [5.0, 3.0, 1.0]),
 ];
 
 const traderList = [
-  ['Bill',   [0.1, -3, -2, -2, 1.02, 1.02], 1.0], 
-  ['Hillary',  [0.2, -2, -3, -3, 1.02, 1.02], 1.0], 
-  ['Chelsea', [0.3, -1, -1, -1, 1.02, 1.02], 1.0], 
-  ['Curly', [0.2, -6, -4, -4, 1.02, 1.02], 0.5], 
-  ['Moe',   [0.4, -4, -6, -6, 1.02, 1.02], 0.5], 
-  ['Larry', [0.6, -2, -2, -2, 1.02, 1.02], 0.5], 
-  ['Groucho', [0.05, -1.5, -1, -1, 1.02, 1.02], 0.75], 
-  ['Harpo', [0.1, -1, -1.5, -1.5, 1.02, 1.02], 0.75], 
-  ['Zeppo', [0.15, -0.5, -0.5, -0.5, 1.02, 1.02], 0.75], 
-  ['Jermaine', [0.25, -2.5, -5, -5, 1.02, 1.02], 1.0], 
-  ['Marlon', [0.35, -1.5, -3, -3, 1.02, 1.02], 1.0], 
-  ['Tito', [0.25, -6.5, -6, -6, 1.02, 1.02], 0.5], 
-  ['Michael', [0.45, -4.5, -8, -8, 1.02, 1.02], 0.5], 
-  ['Randy', [0.65, -2.5, -4, -4, 1.02, 1.02], 0.5], 
-  ['Jackie', [0.55, -2.0, -3, -3, 1.02, 1.02], 0.75], 
-  ['Janet', [0.15, -1.5, -3.5, -3.5, 1.02, 1.02], 0.75], 
-  ['La Toya', [0.55, -1.5, -2.5, -2.5, 1.02, 1.02], 0.75],
-  ['Barry', [0.55, -2.0, -3, -3, 1.02, 1.02], 0.75], 
-  ['Robin', [0.15, -1.5, -3.5, -3.5, 1.02, 1.02], 0.75], 
-  ['Maurice', [0.55, -1.5, -2.5, -2.5, 1.02, 1.02], 0.75],
-  ['Donald', [1.0, -1.0, -5, -5, 1.02, 1.02], 2.0],
-  ['Ivana', [2.0, -2.0, -2, -2, 1.02, 1.02], 0.5],
-  ['Donald Jr', [1.0, -1.0, -7.0, -7, 1.02, 1.02], 3.0],
-  ['Eric', [1.0, -1.0, -5, -5, 1.02, 1.02], 2.0],
-  ['Ivanka', [2.0, -2.0, -2, -2, 1.02, 1.02], 1.0],
-  ['Jared', [3.0, -3.0, -2, -2, 1.02, 1.02], 2.0],
-  ['Marla', [3.0, -3.0, -1, -1, 1.02, 1.02], 0.5],
-  ['Tiffany', [2.0, -2.0, -1, -1, 1.02, 1.02], 0.5],
-  ['Melania', [1.0, -1.0, -1, -1, 1.02, 1.02], 0.5],
-  ['Barron', [1.0, -1.0, -1, -1, 1.02, 1.02], 0.5],
-  ['Index', [0, 0, -1.0, -1, -1, 1.02, 1.02], 1.0],
+  ['Bill',   [0.1, -3, -2, -2.5, 1.03, 1.03], 1.0], 
+  ['Hillary',  [0.2, -2, -3, -3.5, 1.03, 1.03], 1.0], 
+  ['Chelsea', [0.3, -1, -1, -1.5, 1.03, 1.03], 1.0], 
+  ['Curly', [0.2, -6, -4, -4.5, 1.03, 1.03], 0.5], 
+  ['Moe',   [0.4, -4, -6, -6.5, 1.03, 1.03], 0.5], 
+  ['Larry', [0.6, -2, -2, -2.5, 1.03, 1.03], 0.5], 
+  ['Groucho', [0.05, -1.5, -1, -1.5, 1.03, 1.03], 0.75], 
+  ['Harpo', [0.1, -1, -1.5, -2.0, 1.03, 1.03], 0.75], 
+  ['Zeppo', [0.15, -0.5, -0.5, -1.0, 1.03, 1.03], 0.75], 
+  ['Jermaine', [0.25, -2.5, -5, -5.5, 1.03, 1.03], 1.0], 
+  ['Marlon', [0.35, -1.5, -3, -3.5, 1.03, 1.03], 1.0], 
+  ['Tito', [0.25, -6.5, -6, -6.5, 1.03, 1.03], 0.5], 
+  ['Michael', [0.45, -4.5, -8, -8.5, 1.03, 1.03], 0.5], 
+  ['Randy', [0.65, -2.5, -4, -4.5, 1.03, 1.03], 0.5], 
+  ['Jackie', [0.55, -2.0, -3, -3.5, 1.03, 1.03], 0.75], 
+  ['Janet', [0.15, -1.5, -3.5, -4.0, 1.03, 1.03], 0.75], 
+  ['La Toya', [0.55, -1.5, -2.5, -3.0, 1.03, 1.03], 0.75],
+  ['Barry', [0.55, -2.0, -3, -3.5, 1.03, 1.03], 0.75], 
+  ['Robin', [0.15, -1.5, -3.5, -4.0, 1.03, 1.03], 0.75], 
+  ['Maurice', [0.55, -1.5, -2.5, -3.0, 1.03, 1.03], 0.75],
+  ['Donald', [1.0, -1.0, -5, -5.5, 1.03, 1.03], 2.0],
+  ['Ivana', [2.0, -2.0, -2, -2.5, 1.03, 1.03], 0.5],
+  ['Donald Jr', [1.0, -1.0, -7.0, -7.5, 1.03, 1.03], 3.0],
+  ['Eric', [1.0, -1.0, -5, -5.5, 1.03, 1.03], 2.0],
+  ['Ivanka', [2.0, -2.0, -2, -2.5, 1.03, 1.03], 1.0],
+  ['Jared', [3.0, -3.0, -2, -2.5, 1.03, 1.03], 2.0],
+  ['Marla', [3.0, -3.0, -1, -1.5, 1.03, 1.03], 0.5],
+  ['Tiffany', [2.0, -2.0, -1, -1.5, 1.03, 1.03], 0.5],
+  ['Melania', [1.0, -1.0, -1, -1.5, 1.03, 1.03], 0.5],
+  ['Barron', [1.0, -1.0, -1, -1.5, 1.03, 1.03], 0.5],
+  ['Index', [0, 0, -1.0, -1, -1, 1.03, 1.03], 1.0],
   //['Index', [1.0, -1.0, -5.0, -5], 2.0],
 ]; 
 
@@ -406,6 +406,11 @@ while (dataCycle <= dataLimit) {
   console.log("Data cycle: ", dataCycle, " P eps: ", ds.universe.get('P').eps);
   console.log("Data cycle: ", dataCycle, " Q eps: ", ds.universe.get('Q').eps);
   console.log("Data cycle: ", dataCycle, " R eps: ", ds.universe.get('R').eps);
+  console.log("Data cycle: ", dataCycle, " S price: ", ds.universe.get('S').price[0]);
+  console.log("Data cycle: ", dataCycle, " P price: ", ds.universe.get('P').price[0]);
+  console.log("Data cycle: ", dataCycle, " Q price: ", ds.universe.get('Q').price[0]);
+  console.log("Data cycle: ", dataCycle, " R price: ", ds.universe.get('R').price[0]);
+
 
   //Save results to data store
   ds.cycles.push(new Cycle(cycle, dataCycle, ds.universe));
@@ -467,7 +472,10 @@ while (dataCycle <= dataLimit) {
   }
   dataCycle += 1; 
 }
-CreateSVG(ds.universe, ds.portfolio, ds.cash, ds.cycles);
+
+console.log('Start: ', ds.cycles[0].cycleIndex);
+
+CreateSVG(ds.universe, ds.portfolio, ds.cash, ds.cycles, ds.cycles[0].cycleIndex);
 
 
 
@@ -592,9 +600,9 @@ module.exports = Exchange;
 
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 0.04;
-        let yscale = 1.0;
-        let filter = 10;
+        let xscale = 0.25;
+        let yscale = 8.0;
+        let filter = 2;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],
           'x': [[230, 53], [63, 270], [51, 170], [270, 270], [100, 133], [133, 83], [50, 200], [47, 47], [238, 53], [68, 270], [58, 170]],
@@ -602,13 +610,13 @@ module.exports = Exchange;
         };
         let circles = [];
         
-        function CreateSVG (universe, portfolio, cash, cycles) {
+        function CreateSVG (universe, portfolio, cash, cycles, start = 0) {
             console.log("CreateSVG cycles: ", cycles);
             console.log("CreateSVG universe: ", universe);
             console.log("CreateSVG portfolio: ", portfolio);
             console.log("CreateSVG cash: ", cash);
 
-            var boxWidth = 790;
+            var boxWidth = 1590;
             var boxHeight = 790;
 
             var svgElem = document.createElementNS (xmlns, "svg");
@@ -624,9 +632,9 @@ module.exports = Exchange;
             // draw borders
             var coords = "M 0, 0";
             coords += " l 0, 790";
-            coords += " l 790, 0";
+            coords += " l 1590, 0";
             coords += " l 0, -790";
-            coords += " l -790, 0";
+            coords += " l -1590, 0";
 
             var path = document.createElementNS (xmlns, "path");
             path.setAttributeNS (null, 'stroke', "#000000");
@@ -640,7 +648,9 @@ module.exports = Exchange;
             const colors = new Map([['S', 'pink'], ['P', 'purple'], ['Q', 'blue'], ['R', 'red']]); 
   
             universe.forEach((stock, ticker) => stock.price.forEach((price, index) => {
-                if (index % filter === 0) circles.push(createCircle(xscale*(stock.price.length - index), yscale*price, colors.get(ticker)));
+                if (index % filter === 0 && index >= start) { 
+                  circles.push(createCircle(xscale*(stock.price.length - index), yscale*price, colors.get(ticker)));
+                }
               }));
 
             circles.forEach(circle => g.appendChild(circle));
