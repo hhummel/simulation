@@ -1,9 +1,10 @@
 'use strict';
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 0.25;
-        let yscale = 8.0;
+        let xscale = 0.14;
+        let yscale = 7.5;
         let filter = 2;
+        let greenDot = 5;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],
           'x': [[230, 53], [63, 270], [51, 170], [270, 270], [100, 133], [133, 83], [50, 200], [47, 47], [238, 53], [68, 270], [58, 170]],
@@ -49,12 +50,20 @@
             const colors = new Map([['S', 'pink'], ['P', 'purple'], ['Q', 'blue'], ['R', 'red']]); 
   
             universe.forEach((stock, ticker) => stock.price.forEach((price, index) => {
-                if (index % filter === 0 && index >= start) { 
-                  circles.push(createCircle(xscale*(stock.price.length - index), yscale*price, colors.get(ticker)));
-                }
-              }));
+              if (index % filter === 0 && index >= start) { 
+                circles.push(createCircle(xscale*(stock.price.length - index), yscale*price, colors.get(ticker)));
+              }
+            }));
+
+            cycles.forEach(cycle => {
+              const color = cycle.dataCycleIndex % 2 === 0 ? 'green' : 'yellow';
+              circles.push(createCircle(xscale*(cycle.cycleIndex - start), yscale*greenDot, color))
+              console.log(color , xscale*(cycle.cycleIndex - start), cycle.dataCycleIndex);
+            });
 
             circles.forEach(circle => g.appendChild(circle));
+
+
 
             document.addEventListener('keypress', (event) => shiftState(circles, state, event), false);
 
