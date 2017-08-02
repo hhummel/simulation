@@ -210,9 +210,11 @@ module.exports = Trader;
 
 let mom = 1.0;
 
+//Freezes
+//let impulse = 5.0;
+
 //Price make asymmetric jumps
-let impulse = 5.0;
-//let impulse = 3.0;
+let impulse = 3.0;
 
 //Price changes linearly
 //let impulse = 2.5;
@@ -231,10 +233,14 @@ const DataStore = __webpack_require__(5);
 const Cycle = __webpack_require__(6);
 
 const stockList = [
-  new Stock('S', 8200, 10.0, -4.0, [10.0, 11.0, 12.0]),
-  new Stock('P', 14300, 5.0, 2.0, [22.0, 21.0, 20.0]),
-  new Stock('Q', 8300, 35.0, 0.5, [30.0, 30.5, 31.0]),
-  new Stock('R', 7900, 15.0, 0.5, [5.0, 3.0, 1.0]),
+  //new Stock('S', 8200, 10.0, -4.0, [10.0, 11.0, 12.0]),
+  //new Stock('P', 14300, 5.0, 2.0, [22.0, 21.0, 20.0]),
+  //new Stock('Q', 8300, 35.0, 0.5, [30.0, 30.5, 31.0]),
+  //new Stock('R', 7900, 15.0, 0.5, [5.0, 3.0, 1.0]),
+  new Stock('S', 8200, 10.0, -4.0, [5.0, 5.0, 5.0]),
+  new Stock('P', 14300, 5.0, 2.0, [6.0, 6.0, 6.0]),
+  new Stock('Q', 8300, 35.0, 0.5, [15.0, 15.0, 15.0]),
+  new Stock('R', 7900, 15.0, 0.5, [18.0, 18.0, 18.0]),
 ];
 
 const traderList = [
@@ -242,6 +248,7 @@ const traderList = [
   ['Hillary',  [0.2, -2, -3, -3.5, 1.05, 1.05], 1.0], 
   ['Chelsea', [0.3, -1, -1, -1.5, 1.05, 1.05], 1.0], 
   ['Curly', [0.2, -6, -4, -4.5, 1.05, 1.05], 0.5], 
+  //['Curly', [0.2, -6, -4, -4.5, 1.05, 1.05], 3.0], 
   ['Moe',   [0.4, -4, -6, -6.5, 1.05, 1.05], 0.5], 
   ['Larry', [0.6, -2, -2, -2.5, 1.05, 1.05], 0.5], 
   ['Groucho', [0.05, -1.5, -1, -1.5, 1.05, 1.05], 0.75], 
@@ -285,6 +292,7 @@ const initialAssets = [
     ['Jermaine', [[['S', 300], ['P', 200], ['R', 125]]], [2000.00]],
     ['Marlon', [[['P', 300], ['Q', 200], ['R', 125]]],[2500.00]],
     ['Tito', [[['S', 400], ['Q', 200], ['R', 125]]], [2500.00]],
+    //['Tito', [[['S', 400], ['Q', 200], ['R', 125]]], [250000.00]],
     ['Michael', [[['S', 400], ['P', 200], ['R', 125]]], [3000.00]],
     ['Randy', [[['P', 500], ['Q', 200], ['R', 125]]], [2500.00]],
     ['Jackie', [[['S', 500], ['Q', 200], ['R', 125]]], [2500.00]],
@@ -314,7 +322,9 @@ ds.cash.forEach(arr => allCash += arr[0]);
 
 //Cycle
 const limit = 100000;
-const dataLimit = 73;
+//const dataLimit = 73;
+const dataLimit = 20;
+const cycleLimit = 50;
 let cycle = 0;
 let dataCycle = 0;
 
@@ -353,14 +363,14 @@ while (dataCycle <= dataLimit) {
     const exchange = new Exchange(ds.universe, traders);
     const book = exchange.getOrderBook();
     const trades = exchange.getTrades(book);
-    if (trades.length === undefined || trades.length === 0) {
+    if (trades.length === undefined || trades.length === 0 || thisCycle >= cycleLimit ) {
 
       //Output cumulative result
-      //console.log("Stocks: ");
-      //universe.forEach((stock, ticker) => console.log(ticker, stock.price));
-      //console.log("Portfolios: ");
-      //portfolio.forEach((port, name) => console.log(name, port));
-      //console.log("Cash: ", cash);
+      console.log("Stocks: ");
+      universe.forEach((stock, ticker) => console.log(ticker, stock.price));
+      console.log("Portfolios: ");
+      portfolio.forEach((port, name) => console.log(name, port));
+      console.log("Cash: ", cash);
       break;
     }
     const [newPrice, newPortfolio, newCash] = exchange.getUpdates(trades);
@@ -396,6 +406,7 @@ while (dataCycle <= dataLimit) {
       negative += trader.negative;
     });
     cycle += 1;
+    thisCycle += 1;
   }
 
   //Output results
@@ -473,7 +484,7 @@ while (dataCycle <= dataLimit) {
 
 console.log('Start: ', ds.cycles[0].cycleIndex);
 
-CreateSVG(ds.universe, ds.portfolio, ds.cash, ds.cycles, ds.cycles[0].cycleIndex);
+CreateSVG(ds.universe, ds.portfolio, ds.cash, ds.cycles);
 
 
 
@@ -598,10 +609,10 @@ module.exports = Exchange;
 
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 0.14;
-        let yscale = 7.5;
+        let xscale = 1.0;
+        let yscale = 10.0;
         let filter = 2;
-        let greenDot = 5;
+        let greenDot = 70;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],
           'x': [[230, 53], [63, 270], [51, 170], [270, 270], [100, 133], [133, 83], [50, 200], [47, 47], [238, 53], [68, 270], [58, 170]],
@@ -655,7 +666,6 @@ module.exports = Exchange;
             cycles.forEach(cycle => {
               const color = cycle.dataCycleIndex % 2 === 0 ? 'green' : 'yellow';
               circles.push(createCircle(xscale*(cycle.cycleIndex - start), yscale*greenDot, color))
-              console.log(color , xscale*(cycle.cycleIndex - start), cycle.dataCycleIndex);
             });
 
             circles.forEach(circle => g.appendChild(circle));

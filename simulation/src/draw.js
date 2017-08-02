@@ -1,10 +1,10 @@
 'use strict';
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 0.14;
-        let yscale = 7.5;
+        let xscale = 1.0;
+        let yscale = 10.0;
         let filter = 2;
-        let greenDot = 5;
+        let greenDot = 70;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],
           'x': [[230, 53], [63, 270], [51, 170], [270, 270], [100, 133], [133, 83], [50, 200], [47, 47], [238, 53], [68, 270], [58, 170]],
@@ -58,7 +58,6 @@
             cycles.forEach(cycle => {
               const color = cycle.dataCycleIndex % 2 === 0 ? 'green' : 'yellow';
               circles.push(createCircle(xscale*(cycle.cycleIndex - start), yscale*greenDot, color))
-              console.log(color , xscale*(cycle.cycleIndex - start), cycle.dataCycleIndex);
             });
 
             circles.forEach(circle => g.appendChild(circle));
