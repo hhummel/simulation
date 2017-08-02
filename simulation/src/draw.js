@@ -1,7 +1,7 @@
 'use strict';
 
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 1.0;
+        let xscale = 0.5;
         let yscale = 10.0;
         let filter = 2;
         let greenDot = 70;
