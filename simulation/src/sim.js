@@ -6,20 +6,21 @@ const Exchange = require('./exchange.js');
 const CreateSVG = require('./draw.js');
 const DataStore = require('./dataStore.js');
 const Cycle = require('./cycle.js');
+const parameters = require('./parameters.js')
 
 //Set parameters
 
-let mom = 1.0;
+let mom = parameters.mom;
 
 //Price make asymmetric jumps
-let impulse = 3.0;
-const limit = 100000;
-const dataLimit = 20;
-const cycleLimit = 100;
+let impulse = parameters.impulse;
+const limit = parameters.limit;
+const dataLimit = parameters.dataLimit;
+const cycleLimit = parameters.cycleLimit;
 
 //Set initial conditions
 const stockList = require('./stockList_0.js');
-const traderList = require('./traderList_0.js');
+const traderList = require('./traderList_1.js');
 const initialAssets = require('./initialAssets_0.js');
 
 const ds = new DataStore(stockList, traderList, initialAssets);
@@ -60,7 +61,7 @@ while (dataCycle <= dataLimit) {
     ]);
     const traders = new Map(traderArray);
  
-    //Test section
+    //Scales the up momentum, leaving down momentum the same.
     traders.forEach(trader => trader.parameters[2] *= mom);
 
     //Do trades

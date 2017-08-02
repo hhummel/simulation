@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -206,27 +206,56 @@ module.exports = Trader;
 "use strict";
 
 
+class Parameters{
+  constructor() {
+    this.mom = 1.0;
+    this.impulse = 3.0;
+    this.limit = 100000;
+    this.dataLimit = 20;
+    this.cycleLimit = 100;
+    this.stockList = './stockList_0.js';
+    this.traderList = './traderList_1.js';
+    this.initialAssets = './initialAssets_0.js';
+    this.xscale = 0.5;
+    this.yscale = 10.0;
+    this.filter = 2.0;
+    this.greenDot = 70.0;
+  }
+}
+
+const parameters = new Parameters();
+module.exports = parameters;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 const Stock = __webpack_require__(0);
 const Trader = __webpack_require__(1);
-const Exchange = __webpack_require__(3);
-const CreateSVG = __webpack_require__(4);
-const DataStore = __webpack_require__(5);
-const Cycle = __webpack_require__(6);
+const Exchange = __webpack_require__(4);
+const CreateSVG = __webpack_require__(5);
+const DataStore = __webpack_require__(6);
+const Cycle = __webpack_require__(7);
+const parameters = __webpack_require__(2)
 
 //Set parameters
 
-let mom = 1.0;
+let mom = parameters.mom;
 
 //Price make asymmetric jumps
-let impulse = 3.0;
-const limit = 100000;
-const dataLimit = 20;
-const cycleLimit = 100;
+let impulse = parameters.impulse;
+const limit = parameters.limit;
+const dataLimit = parameters.dataLimit;
+const cycleLimit = parameters.cycleLimit;
 
 //Set initial conditions
-const stockList = __webpack_require__(7);
-const traderList = __webpack_require__(8);
-const initialAssets = __webpack_require__(9);
+const stockList = __webpack_require__(8);
+const traderList = __webpack_require__(9);
+const initialAssets = __webpack_require__(10);
 
 const ds = new DataStore(stockList, traderList, initialAssets);
 
@@ -266,7 +295,7 @@ while (dataCycle <= dataLimit) {
     ]);
     const traders = new Map(traderArray);
  
-    //Test section
+    //Scales the up momentum, leaving down momentum the same.
     traders.forEach(trader => trader.parameters[2] *= mom);
 
     //Do trades
@@ -399,7 +428,7 @@ CreateSVG(ds.universe, ds.portfolio, ds.cash, ds.cycles);
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -512,17 +541,17 @@ module.exports = Exchange;
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-
+        const parameters = __webpack_require__(2)
         let xmlns = "http://www.w3.org/2000/svg";
-        let xscale = 0.5;
-        let yscale = 10.0;
-        let filter = 2;
-        let greenDot = 70;
+        let xscale = parameters.xscale;
+        let yscale = parameters.yscale;
+        let filter = parameters.filter;
+        let greenDot = parameters.greenDot;
         let state = {
           'v': [[-1, 5], [7, 4], [3, 7], [-1, 8], [11, 2], [3, 13], [-13, 7], [2, 6], [3, 13], [-13, 7], [0, 6]],
           'x': [[230, 53], [63, 270], [51, 170], [270, 270], [100, 133], [133, 83], [50, 200], [47, 47], [238, 53], [68, 270], [58, 170]],
@@ -634,7 +663,7 @@ module.exports = CreateSVG;
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -669,7 +698,7 @@ module.exports = DataStore;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports) {
 
 class Cycle{
@@ -685,7 +714,7 @@ module.exports = Cycle;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const Stock = __webpack_require__(0);
@@ -705,7 +734,7 @@ module.exports = stockList;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 const traderList = [
@@ -746,7 +775,7 @@ module.exports = traderList;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports) {
 
 const initialAssets = [
