@@ -8,7 +8,7 @@ class Parameters{
     this.dataLimit = 20;
     this.cycleLimit = 100;
     this.stockList = '1';
-    this.traderList = '1';
+    this.traderList = '2';
     this.initialAssets = '1';
     this.xscale = 0.5;
     this.yscale = 10.0;

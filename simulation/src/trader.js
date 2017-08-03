@@ -1,7 +1,7 @@
 'use strict';
 
 class Trader{
-  constructor(name, parameters, portfolio, cash, universe, spread = 0.05, maxTrade=100) {
+  constructor(name, parameters, portfolio, cash, universe, spread = 0.05, maxTrade = 100) {
     this.name = name;
     this.parameters = [...parameters];
     this.portfolio = new Map(portfolio);

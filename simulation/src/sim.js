@@ -59,7 +59,8 @@ while (dataCycle <= dataLimit) {
         portfolio.has(t[0]) ? portfolio.get(t[0])[0] : [], 
         cash.has(t[0]) ? cash.get(t[0])[0] : 0, 
         universe, 
-        t[2]
+        t[2],
+        t[3],
       )
     ]);
     const traders = new Map(traderArray);
