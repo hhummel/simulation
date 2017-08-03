@@ -1,7 +1,7 @@
 'use strict';
 
 class Trader{
-  constructor(name, parameters, portfolio, cash, universe, spread = 0.05) {
+  constructor(name, parameters, portfolio, cash, universe, spread = 0.05, maxTrade=100) {
     this.name = name;
     this.parameters = [...parameters];
     this.portfolio = new Map(portfolio);
@@ -11,13 +11,14 @@ class Trader{
     this.positive = 0;
     this.neutral = 0;
     this.negative = 0;
+    this.maxTrade = maxTrade;
   }
 
   tradeLimits(ticker){
     if (!this.universe.has(ticker)) return undefined;
     const price = this.universe.get(ticker).price[0];
-    const buyLimit = Math.min(100, 0.5 * this.cash/price);
-    const sellLimit = this.portfolio.has(ticker) ? Math.min(100, this.portfolio.get(ticker)) : undefined;
+    const buyLimit = Math.min(this.maxTrade, 0.5 * this.cash/price);
+    const sellLimit = this.portfolio.has(ticker) ? Math.min(this.maxTrade, this.portfolio.get(ticker)) : undefined;
     return [buyLimit, sellLimit];
   }
 

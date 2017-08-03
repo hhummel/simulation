@@ -7,9 +7,9 @@ class Parameters{
     this.limit = 100000;
     this.dataLimit = 20;
     this.cycleLimit = 100;
-    this.stockList = './stockList_0.js';
-    this.traderList = './traderList_1.js';
-    this.initialAssets = './initialAssets_0.js';
+    this.stockList = '1';
+    this.traderList = '1';
+    this.initialAssets = '1';
     this.xscale = 0.5;
     this.yscale = 10.0;
     this.filter = 2.0;

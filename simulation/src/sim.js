@@ -1,27 +1,30 @@
 'use strict';
 
+//Import objects
 const Stock = require('./stock.js');
 const Trader = require('./trader.js');
 const Exchange = require('./exchange.js');
 const CreateSVG = require('./draw.js');
 const DataStore = require('./dataStore.js');
 const Cycle = require('./cycle.js');
-const parameters = require('./parameters.js')
+
+//Import data
+const parameters = require('./parameters.js');
+const stockLists = require('./stockLists.js');
+const traderLists = require('./traderLists.js');
+const initialAssetLists = require('./initialAssetLists.js');
 
 //Set parameters
-
 let mom = parameters.mom;
-
-//Price make asymmetric jumps
 let impulse = parameters.impulse;
 const limit = parameters.limit;
 const dataLimit = parameters.dataLimit;
 const cycleLimit = parameters.cycleLimit;
 
 //Set initial conditions
-const stockList = require('./stockList_0.js');
-const traderList = require('./traderList_1.js');
-const initialAssets = require('./initialAssets_0.js');
+const stockList = stockLists[parameters.stockList];
+const traderList = traderLists[parameters.traderList];
+const initialAssets = initialAssetLists[parameters.initialAssets];
 
 const ds = new DataStore(stockList, traderList, initialAssets);
 
